@@ -75,7 +75,7 @@ class APIHandler(tornado.web.RequestHandler):
         self.finish()
 
     def srtp(self, user):
-        self.api_post(API_URL+'srtp', {'number':user.cardnum})
+        self.api_post(API_URL+'srtp', {'number':user.number})
 
     def term(self, user):
         self.api_post(API_URL+'term', '')
