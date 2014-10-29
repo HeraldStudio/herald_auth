@@ -57,6 +57,7 @@ class APIHandler(tornado.web.RequestHandler):
                     self.write('api error')
         except NoResultFound:
             self.write('not auth')
+        self.finish()
         
 
     @tornado.gen.engine
