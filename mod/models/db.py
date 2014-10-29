@@ -5,10 +5,10 @@
 
 import os
 
-DB_HOST = ''
-DB_USER = ''
-DB_PWD = ''
-DB_NAME = ''
+DB_HOST = 'localhost'
+DB_USER = 'herald_auth'
+DB_PWD = 'herald'
+DB_NAME = 'herald_auth'
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base

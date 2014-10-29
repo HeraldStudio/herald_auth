@@ -37,7 +37,7 @@ class AuthHandler(tornado.web.RequestHandler):
         try:
             app = self.db.query(Application).filter(
                 Application.uuid == appid).one()
-            self.write(self.get_token(u,app))
+            self.write(self.get_token(user, app))
         except NoResultFound:
             raise tornado.web.HTTPError(400)
 
@@ -55,7 +55,7 @@ class AuthHandler(tornado.web.RequestHandler):
             return True           
         except NoResultFound:
             if check_password(user, pwd):
-                u = User(cardnum=user, password=pwd)
+                u = User(cardnum=user, password=pwd, state=1)
                 self.db.add(u)
                 self.db.commit()
                 return True
@@ -64,17 +64,17 @@ class AuthHandler(tornado.web.RequestHandler):
     def get_token(self, user, app):
         try:
             pri = self.db.query(Privilege).filter(
-                and_(Privilege.cardnum == user.cardnum, Privilege.aid == app.aid)).one()
+                and_(Privilege.cardnum == user, Privilege.aid == app.aid)).one()
             return pri.uuid
         except NoResultFound:
             try:
                 while 1:
-                    token = sha1(user.cardnum+str(time())+'HearldAuth').hexdigest()
+                    token = sha1(user+str(time())+'HearldAuth').hexdigest()
                     r = self.db.query(Privilege).filter(
                         Privilege.uuid == token).count()
                     if r == 0:
                         break
-                item = Privilege(cardnum=user.cardnum,
+                item = Privilege(cardnum=user,
                                 aid=app.aid,
                                 uuid=token)
                 self.db.add(item)

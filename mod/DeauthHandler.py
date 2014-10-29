@@ -15,7 +15,7 @@ class DeauthHandler(tornado.web.RequestHandler):
         return self.application.db
 
     def get(self):
-        self.write('<form method="post"><input type="text" name="uuid"><input type="submit" name="submit"></form>')
+        self.write('<form method="post"><input type="text" name="uuid"><input type="text" name="appid" value="123"><input type="submit" name="submit"></form>')
         self.write('Herald Auth.')
         self.finish()
 
@@ -29,7 +29,7 @@ class DeauthHandler(tornado.web.RequestHandler):
             pri = self.db.query(Privilege).filter(
                 Privilege.uuid == uuid).one()
             app = self.db.query(Application).filter(
-                Application.aid == pri.aid)
+                Application.aid == pri.aid).one()
             if app.uuid == appid:
                 self.db.delete(pri)
                 self.db.commit()
