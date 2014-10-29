@@ -11,6 +11,7 @@ from hashlib import sha1
 from models.user import User
 from models.privilege import Privilege
 from models.app import Application
+from check_password import check_password
 
 class AuthHandler(tornado.web.RequestHandler):
 
@@ -27,18 +28,38 @@ class AuthHandler(tornado.web.RequestHandler):
         user = self.get_argument('user')
         pwd = self.get_argument('password')
         appid = self.get_argument('appid') 
-        if not (user or pwd or appid):
+        if not (user and pwd and appid):
             raise tornado.web.HTTPError(400)
 
+        if not self.user_check(user, pwd):
+            raise tornado.web.HTTPError(401)
+
         try:
-            u = self.db.query(User).filter(
-                and_(User.cardnum == user, User.password == pwd)).one()
             app = self.db.query(Application).filter(
                 Application.uuid == appid).one()
             self.write(self.get_token(u,app))
         except NoResultFound:
-            raise tornado.web.HTTPError(401)
-        self.finish()
+            raise tornado.web.HTTPError(400)
+
+    def user_check(self, user, pwd):
+        try:
+            u = self.db.query(User).filter(
+                User.cardnum == user).one()
+            if u.password != pwd:
+                if check_password(user, pwd):
+                    u.password = pwd
+                    self.db.add(u)
+                    self.db.commit()
+                    return True
+                return False
+            return True           
+        except NoResultFound:
+            if check_password(user, pwd):
+                u = User(cardnum=user, password=pwd)
+                self.db.add(u)
+                self.db.commit()
+                return True
+            return False
 
     def get_token(self, user, app):
         try:

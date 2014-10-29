@@ -23,7 +23,7 @@ class CheckHandler(tornado.web.RequestHandler):
     def post(self):
         appid = self.get_argument('appid')
         uuid = self.get_argument('uuid')
-        if not (appid or uuid):
+        if not (appid and uuid):
             raise tornado.web.HTTPError(400)
 
         try:
