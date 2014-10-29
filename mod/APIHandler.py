@@ -41,7 +41,7 @@ class APIHandler(tornado.web.RequestHandler):
     def post(self, API):
         uuid = self.get_argument('uuid')
         if not uuid:
-            self.write('param lack')
+            raise tornado.web.HTTPError(400)
 
         try:
             pri = self.db.query(Privilege).filter(
@@ -54,9 +54,9 @@ class APIHandler(tornado.web.RequestHandler):
                 try:
                     self.unitsmap[API](user)
                 except KeyError:
-                    self.write('api error')
+                    raise tornado.web.HTTPError(400)
         except NoResultFound:
-            self.write('not auth')
+            raise tornado.web.HTTPError(401)
         
 
     @tornado.gen.engine
