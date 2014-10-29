@@ -40,6 +40,7 @@ class APIHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def post(self, API):
         uuid = self.get_argument('uuid')
+        appid = self.get_argument('appid')
         if not uuid:
             raise tornado.web.HTTPError(400)
 
@@ -50,13 +51,14 @@ class APIHandler(tornado.web.RequestHandler):
                 Application.aid == pri.aid).one()
             user = self.db.query(User).filter(
                 User.cardnum == pri.cardnum).one()
-            if app.state == '1':
+            if app.state == '1' and app.uuid == appid:
                 try:
                     self.unitsmap[API](user)
                 except KeyError:
                     raise tornado.web.HTTPError(400)
         except NoResultFound:
-            raise tornado.web.HTTPError(401)
+            pass
+        raise tornado.web.HTTPError(401)
         
 
     @tornado.gen.engine

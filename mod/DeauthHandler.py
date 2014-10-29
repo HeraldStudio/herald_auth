@@ -6,6 +6,7 @@
 import tornado.web
 from sqlalchemy.orm.exc import NoResultFound
 from models.privilege import Privilege
+from models.app import Application
 
 class DeauthHandler(tornado.web.RequestHandler):
 
@@ -20,15 +21,21 @@ class DeauthHandler(tornado.web.RequestHandler):
 
     def post(self):
         uuid = self.get_argument('uuid')
+        appid = self.get_argument('appid')
         if not uuid:
             raise tornado.web.HTTPError(400)
 
         try:
             pri = self.db.query(Privilege).filter(
                 Privilege.uuid == uuid).one()
-            self.db.delete(pri)
-            self.db.commit()
-            self.write('OK')
+            app = self.db.query(Application).filter(
+                Application.aid == pri.aid)
+            if app.uuid == appid:
+                self.db.delete(pri)
+                self.db.commit()
+                self.write('OK')
+            else:
+                raise tornado.web.HTTPError(401)
         except NoResultFound:
             raise tornado.web.HTTPError(400)
         self.finish()
