@@ -5,7 +5,7 @@
 
 import urllib
 import tornado.web
-from tornado.httpclient import HTTPRequest, AsyncHTTPClient
+from tornado.httpclient import HTTPRequest, AsyncHTTPClient, HTTPError
 from sqlalchemy.orm.exc import NoResultFound
 from models.user import User
 from models.privilege import Privilege
@@ -63,18 +63,22 @@ class APIHandler(tornado.web.RequestHandler):
 
     @tornado.gen.engine
     def api_post(self, url, data):
-        client = AsyncHTTPClient()
-        request = HTTPRequest(
-            url, body=urllib.urlencode(data),
-            method='POST',
-            request_timeout=CONNECT_TIME_OUT)
-        response = yield tornado.gen.Task(client.fetch, request)
-        body = response.body
-        if body:
-            self.write(body)
-        else:
-            self.write('time out')
-        self.finish()
+        try:
+            client = AsyncHTTPClient()
+            request = HTTPRequest(
+                url, body=urllib.urlencode(data),
+                method='POST',
+                request_timeout=CONNECT_TIME_OUT)
+            response = yield tornado.gen.Task(client.fetch, request)
+            body = response.body
+            if body:
+                self.write(body)
+            else:
+                self.write('time out')
+            self.finish()
+        except HTTPError:
+            self.write('services are unreachable')
+            self.finish()
 
     def srtp(self, user):
         self.api_post(API_URL+'srtp', {'number':user.number})
