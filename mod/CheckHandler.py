@@ -31,7 +31,7 @@ class CheckHandler(tornado.web.RequestHandler):
                 Application.uuid == appid).one()
             pri = self.db.query(Privilege).filter(
                 and_(Privilege.uuid == uuid, Privilege.aid == app.aid)).one()
-            self.write('OK')
+            self.write(pri.cardnum)
         except NoResultFound:
             raise tornado.web.HTTPError(401)
         self.finish()

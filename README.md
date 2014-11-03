@@ -12,7 +12,7 @@
 > 
 > DATA  : uuid=用户唯一标识符;appid=应用唯一标识符;
 > 
-> RETURN: 参数错误:HTTP400;uuid不合法:HTTP401;uuid合法:HTTP200 ‘OK’
+> RETURN: 参数错误:HTTP400;uuid不合法:HTTP401;uuid合法:HTTP200 ‘[用户一卡通号]’
 
 #### 更新用户信息
 > POST  : http://.../uc/update
@@ -45,4 +45,5 @@
 - simsimi (POST msg=信息)
 - nic
 - card
+- lecture
 ```
