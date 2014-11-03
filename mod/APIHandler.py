@@ -29,11 +29,12 @@ class APIHandler(tornado.web.RequestHandler):
             'pe': self.pe,
             'simsimi': self.simsimi,
             'nic': self.nic,
-            'card': self.card
+            'card': self.card,
+            'lecture':self.lecture,
         }
 
     def get(self, API):
-        self.write('<form method="post"><input type="text" name="uuid"><input type="submit" name="submit"></form>')
+        self.write('<form method="post"><input type="text" name="uuid"><input type="text" name="appid"><input type="submit" name="submit"></form>')
         self.write('Herald Auth.')
         self.finish()
 
@@ -41,7 +42,7 @@ class APIHandler(tornado.web.RequestHandler):
     def post(self, API):
         uuid = self.get_argument('uuid')
         appid = self.get_argument('appid')
-        if not uuid:
+        if not (uuid and appid):
             raise tornado.web.HTTPError(400)
 
         try:
@@ -56,10 +57,12 @@ class APIHandler(tornado.web.RequestHandler):
                     self.unitsmap[API](user)
                 except KeyError:
                     raise tornado.web.HTTPError(400)
+            else:
+                self.db.close()
+                raise tornado.web.HTTPError(401)
         except NoResultFound:
-            pass
-        raise tornado.web.HTTPError(401)
-        
+            self.db.close()
+            raise tornado.web.HTTPError(401) 
 
     @tornado.gen.engine
     def api_post(self, url, data):
@@ -75,9 +78,11 @@ class APIHandler(tornado.web.RequestHandler):
                 self.write(body)
             else:
                 self.write('time out')
+            self.db.close()
             self.finish()
         except HTTPError:
             self.write('services are unreachable')
+            self.db.close()
             self.finish()
 
     def srtp(self, user):
@@ -96,7 +101,7 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'gpa', {'username':user.cardnum, 'password':user.password})
 
     def pe(self, user):
-        self.api_post(API_URL+'gpa', {'cardnum':user.cardnum, 'pwd':user.pe_password})
+        self.api_post(API_URL+'pe', {'cardnum':user.cardnum, 'pwd':user.pe_password})
 
     def simsimi(self, user):
         self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx')})
@@ -106,3 +111,6 @@ class APIHandler(tornado.web.RequestHandler):
 
     def card(self, user):
         self.api_post(API_URL+'card', '')
+
+    def lecture(self, user):
+        self.api_post(API_URL+'lecture', {'cardnum':user.cardnum, 'password':user.password})

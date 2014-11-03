@@ -67,9 +67,10 @@ class UpdateHandler(tornado.web.RequestHandler):
                 self.db.commit()
 
                 self.write('OK')
+                self.db.close()
                 self.finish()
             else:
                 raise tornado.web.HTTPError(401)
         except NoResultFound:
-            pass
-        raise tornado.web.HTTPError(400)
+            self.db.close()
+            raise tornado.web.HTTPError(400)

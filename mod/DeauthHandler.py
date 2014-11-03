@@ -39,3 +39,4 @@ class DeauthHandler(tornado.web.RequestHandler):
         except NoResultFound:
             raise tornado.web.HTTPError(400)
         self.finish()
+        self.db.close()

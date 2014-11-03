@@ -45,5 +45,5 @@ class AuthCenter(tornado.web.Application):
 
 if __name__ == '__main__':
     tornado.options.parse_command_line()
-    AuthCenter().listen(options.port)
+    AuthCenter().listen(options.port, address='127.0.0.1')
     tornado.ioloop.IOLoop.instance().start()

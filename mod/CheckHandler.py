@@ -34,4 +34,5 @@ class CheckHandler(tornado.web.RequestHandler):
             self.write(pri.cardnum)
         except NoResultFound:
             raise tornado.web.HTTPError(401)
+        self.db.close()
         self.finish()
