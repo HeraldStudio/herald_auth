@@ -24,14 +24,14 @@
 #### 注销用户UUID（解除授权）
 > POST  : http://.../uc/deauth
 > 
-> DATA  : uuid=用户唯一标识符;appid=应用唯一标识符;
+> DATA  : uuid=用户唯一标识符;
 > 
-> RETURN: 参数错误:HTTP400;uuid不合法:HTTP401;注销成功:HTTP200 ‘OK’
+> RETURN: 参数错误:HTTP400;uuid不合法:HTTP400;注销成功:HTTP200 ‘OK’
 
 #### 调用API获取用户信息（使用API）
 > POST  : http://.../uc/api/[API NAME]
 > 
-> DATA  : uuid=用户唯一标识符;appid=应用唯一标识符;
+> DATA  : uuid=用户唯一标识符;
 > 
 > RETURN: 参数错误:HTTP400;成功:HTTP200 API返回内容
 

@@ -34,15 +34,15 @@ class APIHandler(tornado.web.RequestHandler):
         }
 
     def get(self, API):
-        self.write('<form method="post"><input type="text" name="uuid"><input type="text" name="appid"><input type="submit" name="submit"></form>')
+        self.write('<form method="post"><input type="text" name="uuid"><input type="submit" name="submit"></form>')
         self.write('Herald Auth.')
         self.finish()
 
     @tornado.web.asynchronous
     def post(self, API):
         uuid = self.get_argument('uuid')
-        appid = self.get_argument('appid')
-        if not (uuid and appid):
+        #appid = self.get_argument('appid')
+        if not (uuid):
             raise tornado.web.HTTPError(400)
 
         try:
@@ -52,7 +52,7 @@ class APIHandler(tornado.web.RequestHandler):
                 Application.aid == pri.aid).one()
             user = self.db.query(User).filter(
                 User.cardnum == pri.cardnum).one()
-            if app.state == '1' and app.uuid == appid:
+            if app.state == '1':
                 try:
                     self.unitsmap[API](user)
                 except KeyError:
