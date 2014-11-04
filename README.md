@@ -44,6 +44,6 @@
 - pe
 - simsimi (POST msg=信息)
 - nic
-- card
+- card(POST timedelta=查询时间长度)
 - lecture
 ```

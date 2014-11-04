@@ -107,10 +107,10 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx')})
 
     def nic(self, user):
-        self.api_post(API_URL+'nic', '')
+        self.api_post(API_URL+'nic', {'cardnum':user.cardnum, 'password':user.password})
 
     def card(self, user):
-        self.api_post(API_URL+'card', '')
+        self.api_post(API_URL+'card', {'cardnum':user.cardnum, 'password':user.password, 'timedelta':self.get_argument('timedelta', default='0')})
 
     def lecture(self, user):
         self.api_post(API_URL+'lecture', {'cardnum':user.cardnum, 'password':user.password})
