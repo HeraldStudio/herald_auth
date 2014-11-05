@@ -13,3 +13,4 @@ class Application(Base):
     uuid = Column(String(32), nullable=False)
     tag = Column(String(255), nullable=True)
     state = Column(String(1), nullable=False)
+    access_left = Column(Integer, default=0)

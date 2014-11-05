@@ -92,3 +92,25 @@ class UpdateHandler(tornado.web.RequestHandler):
                 self.finish()
             else:
                 raise tornado.web.HTTPError(401)
+
+    def get_token(self, user, app):
+        try:
+            pri = self.db.query(Privilege).filter(
+                and_(Privilege.cardnum == user, Privilege.aid == app.aid)).one()
+            return pri.uuid
+        except NoResultFound:
+            try:
+                while 1:
+                    token = sha1(user+str(time())+'HearldAuth').hexdigest()
+                    r = self.db.query(Privilege).filter(
+                        Privilege.uuid == token).count()
+                    if r == 0:
+                        break
+                item = Privilege(cardnum=user,
+                                aid=app.aid,
+                                uuid=token)
+                self.db.add(item)
+                self.db.commit()
+            except:
+                raise tornado.web.HTTPError(401)
+            return token
