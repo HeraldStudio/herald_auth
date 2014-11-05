@@ -12,6 +12,9 @@ from models.privilege import Privilege
 from models.app import Application
 from config import *
 import time
+import sys  
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 class APIHandler(tornado.web.RequestHandler):
 

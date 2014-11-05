@@ -46,4 +46,6 @@
 - nic
 - card(POST timedelta=查询时间长度)
 - lecture
+- library
+- renew (POST barcode=图书条形码号)
 ```
