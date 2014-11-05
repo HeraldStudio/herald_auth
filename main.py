@@ -34,8 +34,6 @@ class AuthCenter(tornado.web.Application):
         ]
         settings = dict(
             cookie_secret="87C0BB001D10FBF11874589E0AC7823F",
-            template_path=os.path.join(os.path.dirname(__file__), 'templates'),
-            static_path=os.path.join(os.path.dirname(__file__), 'static'),
             debug=True
         )
         tornado.web.Application.__init__(self, handlers, **settings)
