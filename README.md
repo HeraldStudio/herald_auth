@@ -33,7 +33,7 @@
 > 
 > DATA  : uuid=用户唯一标识符;
 > 
-> RETURN: 参数错误:HTTP400;成功:HTTP200 API返回内容
+> RETURN: 参数错误:HTTP400;appid次数耗尽:HTTP200 'access denied';内部请求超时:HTTP200 'time out';成功:HTTP200 API返回内容
 
 #### API NAME 信息
 - srtp

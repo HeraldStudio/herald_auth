@@ -11,6 +11,7 @@ from models.user import User
 from models.privilege import Privilege
 from models.app import Application
 from config import *
+import time
 
 class APIHandler(tornado.web.RequestHandler):
 
@@ -52,9 +53,30 @@ class APIHandler(tornado.web.RequestHandler):
                 Application.aid == pri.aid).one()
             user = self.db.query(User).filter(
                 User.cardnum == pri.cardnum).one()
-            if app.state == '1':
+            if app.state == '1' and user.state == 1:
                 try:
                     self.unitsmap[API](user)
+                    pri.last_access = int(time.time())
+                    pri.access_count += 1
+                    self.db.add(pri)
+                    self.db.commit()
+                except KeyError:
+                    raise tornado.web.HTTPError(400)
+            elif app.state == '2':
+                if app.access_left <=0:
+                    self.write('access denied')
+                    self.finish()
+                    self.db.close()
+                    return
+                app.access_left -= 1
+                self.db.add(app)
+                self.db.commit() 
+                try:
+                    self.unitsmap[API](user)
+                    pri.last_access = int(time.time())
+                    pri.access_count += 1
+                    self.db.add(pri)
+                    self.db.commit()
                 except KeyError:
                     raise tornado.web.HTTPError(400)
             else:
@@ -95,13 +117,17 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'sidebar', {'cardnum':user.cardnum, 'term':TERM})
 
     def curriculum(self, user):
-        self.api_post(API_URL+'sidebar', {'cardnum':user.cardnum, 'term':TERM})
+        self.api_post(API_URL+'curriculum', {'cardnum':user.cardnum, 'term':TERM})
 
     def gpa(self, user):
         self.api_post(API_URL+'gpa', {'username':user.cardnum, 'password':user.password})
 
     def pe(self, user):
-        self.api_post(API_URL+'pe', {'cardnum':user.cardnum, 'pwd':user.pe_password})
+        if not user.pe_password:
+            pwd = user.cardnum
+        else:
+            pwd = user.pe_password
+        self.api_post(API_URL+'pe', {'cardnum':user.cardnum, 'pwd':pwd})
 
     def simsimi(self, user):
         self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx')})
