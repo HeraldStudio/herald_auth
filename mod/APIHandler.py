@@ -67,12 +67,12 @@ class APIHandler(tornado.web.RequestHandler):
                     self.db.add(pri)
                     self.db.commit()
                 except KeyError:
+                    self.finish()
                     raise tornado.web.HTTPError(400)
             elif app.state == '2':
                 if app.access_left <=0:
                     self.write('access denied')
                     self.finish()
-                    self.db.close()
                     return
                 app.access_left -= 1
                 self.db.add(app)
@@ -84,12 +84,13 @@ class APIHandler(tornado.web.RequestHandler):
                     self.db.add(pri)
                     self.db.commit()
                 except KeyError:
+                    self.finish()
                     raise tornado.web.HTTPError(400)
             else:
-                self.db.close()
+                self.finish()
                 raise tornado.web.HTTPError(401)
         except NoResultFound:
-            self.db.close()
+            self.finish()
             raise tornado.web.HTTPError(401) 
 
     @tornado.gen.engine
@@ -106,12 +107,13 @@ class APIHandler(tornado.web.RequestHandler):
                 self.write(body)
             else:
                 self.write('time out')
-            self.db.close()
             self.finish()
         except HTTPError:
             self.write('services are unreachable')
-            self.db.close()
             self.finish()
+
+    def on_finish(self):
+        self.db.close()
 
     def srtp(self, user):
         self.api_post(API_URL+'srtp', {'number':user.number})

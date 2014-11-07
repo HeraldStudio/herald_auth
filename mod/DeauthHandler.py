@@ -23,6 +23,7 @@ class DeauthHandler(tornado.web.RequestHandler):
         uuid = self.get_argument('uuid')
         #appid = self.get_argument('appid')
         if not uuid:
+            self.finish()
             raise tornado.web.HTTPError(400)
 
         try:
@@ -38,6 +39,7 @@ class DeauthHandler(tornado.web.RequestHandler):
             #    raise tornado.web.HTTPError(401)
         except NoResultFound:
             raise tornado.web.HTTPError(400)
-        self.db.close()
         self.finish()
         
+    def on_finish(self):
+        self.db.close()

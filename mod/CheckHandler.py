@@ -24,6 +24,7 @@ class CheckHandler(tornado.web.RequestHandler):
         appid = self.get_argument('appid')
         uuid = self.get_argument('uuid')
         if not (appid and uuid):
+            self.finish()
             raise tornado.web.HTTPError(400)
 
         try:
@@ -33,6 +34,9 @@ class CheckHandler(tornado.web.RequestHandler):
                 and_(Privilege.uuid == uuid, Privilege.aid == app.aid)).one()
             self.write(pri.cardnum)
         except NoResultFound:
+            self.finish()
             raise tornado.web.HTTPError(401)
-        self.db.close()
         self.finish()
+
+    def on_finish(self):
+        self.db.close()

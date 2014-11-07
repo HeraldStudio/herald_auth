@@ -40,6 +40,7 @@ class UpdateHandler(tornado.web.RequestHandler):
         card_consume_pwd = self.get_argument('card_consume_pwd', default='')
 
         if not (cardnum and password):
+            self.finish()
             raise tornado.web.HTTPError(400)
 
         try:
@@ -69,9 +70,9 @@ class UpdateHandler(tornado.web.RequestHandler):
                 self.db.commit()
 
                 self.write('OK')
-                self.db.close()
                 self.finish()
             else:
+                self.finish()
                 raise tornado.web.HTTPError(401)
         except NoResultFound:
             if check_password(cardnum, password):
@@ -92,9 +93,9 @@ class UpdateHandler(tornado.web.RequestHandler):
                 self.db.commit()
 
                 self.write('OK')
-                self.db.close()
                 self.finish()
             else:
+                self.finish()
                 raise tornado.web.HTTPError(401)
 
     def get_token(self, user, app):
@@ -118,3 +119,6 @@ class UpdateHandler(tornado.web.RequestHandler):
             except:
                 raise tornado.web.HTTPError(401)
             return token
+
+    def on_finish(self):
+        self.db.close()

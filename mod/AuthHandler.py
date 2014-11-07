@@ -29,19 +29,20 @@ class AuthHandler(tornado.web.RequestHandler):
         pwd = self.get_argument('password')
         appid = self.get_argument('appid') 
         if not (user and pwd and appid):
+            self.finish()
             raise tornado.web.HTTPError(400)
 
         if not self.user_check(user, pwd):
+            self.finish()
             raise tornado.web.HTTPError(401)
 
         try:
             app = self.db.query(Application).filter(
                 Application.uuid == appid).one()
             self.write(self.get_token(user, app))
-            self.db.close()
             self.finish()
         except NoResultFound:
-            self.db.close()
+            self.finish()
             raise tornado.web.HTTPError(400)
 
     def user_check(self, user, pwd):
@@ -85,3 +86,6 @@ class AuthHandler(tornado.web.RequestHandler):
             except:
                 raise tornado.web.HTTPError(401)
             return token
+
+    def on_finish(self):
+        self.db.close()
