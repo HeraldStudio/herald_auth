@@ -47,14 +47,14 @@ class APIHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
     def post(self, API):
-        uuid = self.get_argument('uuid')
+        self.uuid = self.get_argument('uuid')
         #appid = self.get_argument('appid')
-        if not (uuid):
+        if not (self.uuid):
             raise tornado.web.HTTPError(400)
 
         try:
             pri = self.db.query(Privilege).filter(
-                Privilege.uuid == uuid).one()
+                Privilege.uuid == self.uuid).one()
             app = self.db.query(Application).filter(
                 Application.aid == pri.aid).one()
             user = self.db.query(User).filter(
@@ -138,7 +138,7 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'pe', {'cardnum':user.cardnum, 'pwd':pwd})
 
     def simsimi(self, user):
-        self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx')})
+        self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx'), 'uid': self.uuid})
 
     def nic(self, user):
         self.api_post(API_URL+'nic', {'cardnum':user.cardnum, 'password':user.password})
