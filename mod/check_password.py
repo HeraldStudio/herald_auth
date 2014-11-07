@@ -9,8 +9,8 @@ import urllib
 
 def check_password(cardnum, password):
     data = {
-        'cardnum':cardnum,
-        'password':password,
+        'cardnum': cardnum,
+        'password': password,
     }
     try:
         client = HTTPClient()

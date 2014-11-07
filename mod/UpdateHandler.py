@@ -60,6 +60,10 @@ class UpdateHandler(tornado.web.RequestHandler):
                     user.card_query_pwd = card_query_pwd
                 if card_consume_pwd:
                     user.card_consume_pwd = card_consume_pwd
+                    # if xxx:
+                        # user.xxx = xxx
+                # for i in [number, pas]
+                    # user.set_attr(i) = i
 
                 self.db.add(user)
                 self.db.commit()
