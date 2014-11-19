@@ -41,8 +41,7 @@ class APIHandler(tornado.web.RequestHandler):
         }
 
     def get(self, API):
-        self.write('<form method="post"><input type="text" name="uuid"><input type="submit" name="submit"></form>')
-        self.write('Herald Auth.')
+        self.render('index.html')
         self.finish()
 
     @tornado.web.asynchronous

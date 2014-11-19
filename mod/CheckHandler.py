@@ -16,7 +16,7 @@ class CheckHandler(tornado.web.RequestHandler):
         return self.application.db
 
     def get(self):
-        self.write('<form method="post"><input type="text" name="appid"><input type="text" name="uuid"><input type="submit" name="submit"></form>')
+        # self.write('<form method="post"><input type="text" name="appid"><input type="text" name="uuid"><input type="submit" name="submit"></form>')
         self.write('Herald Auth.')
         self.finish()
 

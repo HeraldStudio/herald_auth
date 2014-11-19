@@ -20,8 +20,8 @@ class AuthHandler(tornado.web.RequestHandler):
         return self.application.db
 
     def get(self):
-        self.write('<form method="post"><input type="text" name="user"><input type="test" name="password"><input type="text" name="appid" value="123"><input type="submit" name="submit"></form>')
-        self.write('Herald API')
+        # self.write('<form method="post"><input type="text" name="user"><input type="test" name="password"><input type="text" name="appid" value="123"><input type="submit" name="submit"></form>')
+        self.write('Herald Auth.')
         self.finish()
 
     def post(self):

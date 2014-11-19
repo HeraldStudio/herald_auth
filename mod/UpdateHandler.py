@@ -14,18 +14,18 @@ class UpdateHandler(tornado.web.RequestHandler):
         return self.application.db
 
     def get(self):
-        self.write('''<form method="post">
-                        <p>更新用户信息（留空不变动）</p>
-                        <p>cardnum(*)         <input type="text" name="cardnum"></p>
-                        <p>number(-)          <input type="text" name="number"></p>
-                        <p>password(*)        <input type="password" name="password"></p>
-                        <p>pe_password(-)     <input type="password" name="pe_password"></p>
-                        <p>lib_username(-)    <input type="text" name="lib_username"></p>
-                        <p>lib_password(-)    <input type="password" name="lib_password"></p>
-                        <p>card_query_pwd  <input type="password" name="card_query_pwd"></p>
-                        <p>card_consume_pwd<input type="password" name="card_consume_pwd"></p>
-                        <p><input type="submit" name="submit"></p>
-                    </form>''')
+        # self.write('''<form method="post">
+        #                 <p>更新用户信息（留空不变动）</p>
+        #                 <p>cardnum(*)         <input type="text" name="cardnum"></p>
+        #                 <p>number(-)          <input type="text" name="number"></p>
+        #                 <p>password(*)        <input type="password" name="password"></p>
+        #                 <p>pe_password(-)     <input type="password" name="pe_password"></p>
+        #                 <p>lib_username(-)    <input type="text" name="lib_username"></p>
+        #                 <p>lib_password(-)    <input type="password" name="lib_password"></p>
+        #                 <p>card_query_pwd  <input type="password" name="card_query_pwd"></p>
+        #                 <p>card_consume_pwd<input type="password" name="card_consume_pwd"></p>
+        #                 <p><input type="submit" name="submit"></p>
+        #             </form>''')
         self.write('Herald Auth.')
         self.finish()
 
