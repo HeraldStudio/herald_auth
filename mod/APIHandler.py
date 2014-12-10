@@ -42,6 +42,7 @@ class APIHandler(tornado.web.RequestHandler):
 
     def get(self, API):
         self.render('index.html')
+        self.finish()
 
     @tornado.web.asynchronous
     def post(self, API):
@@ -69,7 +70,7 @@ class APIHandler(tornado.web.RequestHandler):
                     raise tornado.web.HTTPError(400)
             elif app.state == '2':
                 if app.access_left <=0:
-                    self.write('access denied')
+                    raise tornado.web.HTTPError(404)  # access denied
                     self.finish()
                     return
                 app.access_left -= 1
@@ -104,7 +105,7 @@ class APIHandler(tornado.web.RequestHandler):
             if body:
                 self.write(body)
             else:
-                self.write('time out')
+                raise tornado.web.HTTPError(408) # time out
             self.finish()
         except HTTPError:
             self.write('services are unreachable')
