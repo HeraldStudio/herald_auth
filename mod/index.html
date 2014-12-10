@@ -29,7 +29,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 <ul>
 <li>原有API目前已经停止维护,但是仍然可以正常使用</li>
 <li>由于资料原因,原有使用者需要重新申请<code>APP ID</code></li>
-<li>原有API将于<code>2014.12.30 23:59</code>停止服务</li>
+<li>原有API<code>已停止维护</code>，并将于合适时间停止服务</li>
 </ul>
 
 <hr>
@@ -99,7 +99,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 <li><p>将认证信息和 APPID 发送至认证中心, 获取用户UUID</p>
 
 <blockquote>
-  <p>POST: <a href="http://121.248.63.105/uc/auth">http://121.248.63.105/uc/auth</a> <br>
+  <p>POST: <a href="http://herald.seu.edu.cn/uc/auth">http://herald.seu.edu.cn/uc/auth</a> <br>
   DATA: cardnum=213120498&amp;password=????????</p>
   
   <p>RETURN: 010cd8bd637755999a5da376054753ac6d083f74</p>
@@ -107,13 +107,13 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 <li><p>根据API要求, 发送相应参数和 UUID 至 API 接口</p>
 
 <blockquote>
-  <p>POST: <a href="http://121.248.63.105/api/nic">http://121.248.63.105/api/nic</a> <br>
+  <p>POST: <a href="http://herald.seu.edu.cn/api/nic">http://herald.seu.edu.cn/api/nic</a> <br>
   DATA: uuid=010cd8bd637755999a5da376054753ac6d083f74</p>
   
   <p>RETURN:  <br>
   { “a”: { “state”: “未开通”, “used”: “0 B” }, “web”: { “state”: “正常,在线”, “used”: “14.95 MB” }, “b”: { “state”: “离线”, “used”: “371,856,152 B” }, “left”: “9.88 元” }</p>
   
-  <p>POST: <a href="http://121.248.63.105/api/simsimi">http://121.248.63.105/api/simsimi</a> <br>
+  <p>POST: <a href="http://herald.seu.edu.cn/api/simsimi">http://herald.seu.edu.cn/api/simsimi</a> <br>
   DATA: uuid=010cd8bd637755999a5da376054753ac6d083f74&amp;msg=你好</p>
   
   <p>RETURN: 亲爱的，我非常好，有你更美好</p>
@@ -130,7 +130,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 <li><p>完善用户基础信息(学号,跑操查询密码,图书馆帐号和密码等)</p>
 
 <blockquote>
-  <p>POST: <a href="http://121.248.63.105/uc/update">http://121.248.63.105/uc/update</a> <br>
+  <p>POST: <a href="http://herald.seu.edu.cn/uc/update">http://herald.seu.edu.cn/uc/update</a> <br>
   DATA: 参见 函数说明</p>
   
   <p>RETURN: OK</p>
@@ -161,7 +161,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 </thead>
 <tbody><tr>
   <td align="left">URI</td>
-  <td align="left"><a href="http://121.248.63.105/uc/auth">http://121.248.63.105/uc/auth</a></td>
+  <td align="left"><a href="http://herald.seu.edu.cn/uc/auth">http://herald.seu.edu.cn/uc/auth</a></td>
 </tr>
 <tr>
   <td align="left">Method</td>
@@ -227,7 +227,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 </thead>
 <tbody><tr>
   <td align="left">URI</td>
-  <td align="left"><a href="http://121.248.63.105/uc/check">http://121.248.63.105/uc/check</a></td>
+  <td align="left"><a href="http://herald.seu.edu.cn/uc/check">http://herald.seu.edu.cn/uc/check</a></td>
 </tr>
 <tr>
   <td align="left">Method</td>
@@ -289,7 +289,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 </thead>
 <tbody><tr>
   <td align="left">URI</td>
-  <td align="left"><a href="http://121.248.63.105/uc/update">http://121.248.63.105/uc/update</a></td>
+  <td align="left"><a href="http://herald.seu.edu.cn/uc/update">http://herald.seu.edu.cn/uc/update</a></td>
 </tr>
 <tr>
   <td align="left">Method</td>
@@ -371,7 +371,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 </thead>
 <tbody><tr>
   <td align="left">URI</td>
-  <td align="left"><a href="http://121.248.63.105/uc/deauth">http://121.248.63.105/uc/deauth</a></td>
+  <td align="left"><a href="http://herald.seu.edu.cn/uc/deauth">http://herald.seu.edu.cn/uc/deauth</a></td>
 </tr>
 <tr>
   <td align="left">Method</td>
@@ -425,7 +425,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 </thead>
 <tbody><tr>
   <td align="left">URI</td>
-  <td align="left"><a href="http://121.248.63.105/api/[API">http://121.248.63.105/api/[API</a> NAME]</td>
+  <td align="left"><a href="http://herald.seu.edu.cn/api/[APINAME]">http://herald.seu.edu.cn/api/[APINAME]</a></td>
 </tr>
 <tr>
   <td align="left">Method</td>
