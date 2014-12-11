@@ -38,6 +38,7 @@ class APIHandler(tornado.web.RequestHandler):
             'library':self.library,
             'renew':self.renew,
             'search':self.search,
+            'pc':self.pc,
         }
 
     def get(self, API):
@@ -156,3 +157,6 @@ class APIHandler(tornado.web.RequestHandler):
 
     def search(self, user):
         self.api_post(API_URL+'search', {'book':self.get_argument('book')})
+
+    def pc(self, user):
+        self.api_post(API_URL+'pc', '')
