@@ -67,13 +67,10 @@ class APIHandler(tornado.web.RequestHandler):
                     self.db.add(pri)
                     self.db.commit()
                 except KeyError:
-                    self.finish()
                     raise tornado.web.HTTPError(400)
             elif app.state == '2':
                 if app.access_left <=0:
                     raise tornado.web.HTTPError(404)  # access denied
-                    self.finish()
-                    return
                 app.access_left -= 1
                 self.db.add(app)
                 self.db.commit() 
@@ -84,14 +81,12 @@ class APIHandler(tornado.web.RequestHandler):
                     self.db.add(pri)
                     self.db.commit()
                 except KeyError:
-                    self.finish()
                     raise tornado.web.HTTPError(400)
             else:
-                self.finish()
                 raise tornado.web.HTTPError(401)
         except NoResultFound:
-            self.finish()
             raise tornado.web.HTTPError(401) 
+
 
     @tornado.gen.engine
     def api_post(self, url, data):
