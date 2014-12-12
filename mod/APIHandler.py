@@ -39,6 +39,7 @@ class APIHandler(tornado.web.RequestHandler):
             'renew':self.renew,
             'search':self.search,
             'pc':self.pc,
+            'jwc':self.jwc,
         }
 
     def get(self, API):
@@ -155,3 +156,6 @@ class APIHandler(tornado.web.RequestHandler):
 
     def pc(self, user):
         self.api_post(API_URL+'pc', '')
+
+    def jwc(self, user):
+        self.api_post(API_URL+'jwc', '')

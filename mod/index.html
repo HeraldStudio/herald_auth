@@ -100,7 +100,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 
 <blockquote>
   <p>POST: <a href="http://herald.seu.edu.cn/uc/auth">http://herald.seu.edu.cn/uc/auth</a> <br>
-  DATA: cardnum=213120498&amp;password=????????</p>
+  DATA: user=213120498&amp;password=????????&amp;appid=***********</p>
   
   <p>RETURN: 010cd8bd637755999a5da376054753ac6d083f74</p>
 </blockquote></li>
@@ -184,6 +184,10 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 <tr>
   <td align="left">password</td>
   <td align="left">统一认证密码</td>
+</tr>
+<tr>
+  <td align="left">appid</td>
+  <td align="left">APPID</td>
 </tr>
 </tbody></table>
 
@@ -981,7 +985,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 </tr>
 <tr>
   <td align="left">[timedelta]</td>
-  <td align="left">详单查询开始时间戳，留空仅查询余额(没有detial)</td>
+  <td align="left">查询最近timedelta天的交易记录，留空仅查询余额(没有detial)</td>
 </tr>
 </tbody></table>
 
