@@ -34,12 +34,14 @@ class APIHandler(tornado.web.RequestHandler):
             'simsimi': self.simsimi,
             'nic': self.nic,
             'card': self.card,
-            'lecture':self.lecture,
-            'library':self.library,
-            'renew':self.renew,
-            'search':self.search,
-            'pc':self.pc,
-            'jwc':self.jwc,
+            'lecture': self.lecture,
+            'library': self.library,
+            'renew': self.renew,
+            'search': self.search,
+            'pc': self.pc,
+            'jwc': self.jwc,
+            'schoolbus': self.schoolbus,
+            'week': self.week,
         }
 
     def get(self, API):
@@ -159,3 +161,9 @@ class APIHandler(tornado.web.RequestHandler):
 
     def jwc(self, user):
         self.api_post(API_URL+'jwc', '')
+
+    def schoolbus(self, user):
+        self.api_post(API_URL+'schoolbus', '')
+
+    def week(self, user):
+        self.api_post(API_URL+'week', '')
