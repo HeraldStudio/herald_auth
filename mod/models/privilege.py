@@ -12,5 +12,6 @@ class Privilege(Base):
     uuid = Column(String(40), primary_key=True)
     cardnum = Column(ForeignKey(u'user.cardnum'))
     aid = Column(ForeignKey(u'application.aid'))
+    access_ip = Column(String(20), nullable=True)
     last_access = Column(Integer, nullable=True)
     access_count = Column(Integer, default=0)

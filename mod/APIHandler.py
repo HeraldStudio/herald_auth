@@ -46,7 +46,7 @@ class APIHandler(tornado.web.RequestHandler):
 
     def get(self, API):
         self.render('index.html')
-        self.finish()
+        #self.finish()
 
     @tornado.web.asynchronous
     def post(self, API):
