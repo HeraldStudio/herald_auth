@@ -42,7 +42,8 @@ class APIHandler(tornado.web.RequestHandler):
             'jwc': self.jwc,
             'schoolbus': self.schoolbus,
             'week': self.week,
-            'phylab': self.phylab
+            'phylab': self.phylab,
+            'emptyroom': self.emptyroom,
         }
 
     def get(self, API):
@@ -171,3 +172,37 @@ class APIHandler(tornado.web.RequestHandler):
 
     def phylab(self, user):
         self.api_post(API_URL+'phylab', {'number':user.cardnum, 'password':user.password, 'term':TERM})
+
+    def emptyroom(self, user):
+        arg5 = self.get_argument('arg5')
+        if arg5:
+            url = API_URL+'query/%s/%s/%s/%s/%s' % (
+                self.get_argument('arg1'),
+                self.get_argument('arg2'),
+                self.get_argument('arg3'),
+                self.get_argument('arg4'),
+                arg5
+                )
+        else:
+            url = API_URL+'query/%s/%s/%s/%s/%s' % (
+                self.get_argument('arg1'),
+                self.get_argument('arg2'),
+                self.get_argument('arg3'),
+                self.get_argument('arg4')
+                )
+        try:
+            client = AsyncHTTPClient()
+            request = HTTPRequest(
+                url,
+                method='GET',
+                request_timeout=CONNECT_TIME_OUT)
+            response = yield tornado.gen.Task(client.fetch, request)
+            body = response.body
+            if body:
+                self.write(body)
+            else:
+                raise tornado.web.HTTPError(408) # time out
+            self.finish()
+        except HTTPError:
+            self.write('services are unreachable')
+            self.finish()
