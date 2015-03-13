@@ -42,6 +42,7 @@ class APIHandler(tornado.web.RequestHandler):
             'jwc': self.jwc,
             'schoolbus': self.schoolbus,
             'week': self.week,
+            'phylab': self.phylab
         }
 
     def get(self, API):
@@ -167,3 +168,6 @@ class APIHandler(tornado.web.RequestHandler):
 
     def week(self, user):
         self.api_post(API_URL+'week', '')
+
+    def phylab(self, user):
+        self.api_post(API_URL+'phylab', {'number':user.cardnum, 'password':user.password, 'term':TERM})
