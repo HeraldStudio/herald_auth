@@ -173,6 +173,7 @@ class APIHandler(tornado.web.RequestHandler):
     def phylab(self, user):
         self.api_post(API_URL+'phylab', {'number':user.cardnum, 'password':user.password, 'term':TERM})
 
+    @tornado.gen.engine
     def emptyroom(self, user):
         arg5 = self.get_argument('arg5')
         if arg5:
@@ -184,7 +185,7 @@ class APIHandler(tornado.web.RequestHandler):
                 arg5
                 )
         else:
-            url = API_URL+'query/%s/%s/%s/%s/%s' % (
+            url = API_URL+'query/%s/%s/%s/%s' % (
                 self.get_argument('arg1'),
                 self.get_argument('arg2'),
                 self.get_argument('arg3'),
