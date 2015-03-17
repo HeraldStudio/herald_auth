@@ -44,6 +44,7 @@ class APIHandler(tornado.web.RequestHandler):
             'week': self.week,
             'phylab': self.phylab,
             'emptyroom': self.emptyroom,
+            'lecturenotice': self.lecturenotice,
         }
 
     def get(self, API):
@@ -172,6 +173,9 @@ class APIHandler(tornado.web.RequestHandler):
 
     def phylab(self, user):
         self.api_post(API_URL+'phylab', {'number':user.cardnum, 'password':user.password, 'term':TERM})
+
+    def lecturenotice(self, user):
+        self.api_post(API_URL+'lecturenotice', '')
 
     @tornado.gen.engine
     def emptyroom(self, user):
