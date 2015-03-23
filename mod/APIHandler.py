@@ -183,8 +183,10 @@ class APIHandler(tornado.web.RequestHandler):
 
     @tornado.gen.engine
     def emptyroom(self, user):
-        arg5 = self.get_argument('arg5')
-        if arg5:
+        try:
+            arg5 = self.get_argument('arg5')
+            if not arg5:
+                arg5[xxxx]
             url = API_URL+'query/%s/%s/%s/%s/%s' % (
                 self.get_argument('arg1'),
                 self.get_argument('arg2'),
@@ -192,7 +194,7 @@ class APIHandler(tornado.web.RequestHandler):
                 self.get_argument('arg4'),
                 arg5
                 )
-        else:
+        except:
             url = API_URL+'query/%s/%s/%s/%s' % (
                 self.get_argument('arg1'),
                 self.get_argument('arg2'),
