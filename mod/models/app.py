@@ -13,4 +13,8 @@ class Application(Base):
     uuid = Column(String(32), nullable=False)
     tag = Column(String(255), nullable=True)
     state = Column(String(1), nullable=False)
+        # 1 means app can use api forever
+        # 2 means app can use api when access_left > 0
+        # [a-z] means app only can use some api
+        # [A-Z] means app only can use some api when access_left > 0
     access_left = Column(Integer, default=0)

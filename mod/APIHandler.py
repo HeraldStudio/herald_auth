@@ -24,7 +24,7 @@ class APIHandler(tornado.web.RequestHandler):
 
     @property
     def unitsmap(self):
-        return {
+        allAPI = {
             'srtp': self.srtp,
             'term': self.term,
             'sidebar': self.sidebar,
@@ -46,7 +46,18 @@ class APIHandler(tornado.web.RequestHandler):
             'emptyroom': self.emptyroom,
             'lecturenotice': self.lecturenotice,
             'user': self.user
+        }       
+        
+        mapTable = {
+        '1': allAPI,
+        '2': allAPI,
+        'a': {
+                'week': self.week,
+                'user': self.user
+            }
         }
+
+        return mapTable
 
     def get(self, API):
         self.render('index.html')
@@ -66,36 +77,43 @@ class APIHandler(tornado.web.RequestHandler):
                 Application.aid == pri.aid).one()
             user = self.db.query(User).filter(
                 User.cardnum == pri.cardnum).one()
-            if app.state == '1' and user.state == 1:
-                try:
-                    self.unitsmap[API](user)
-                    pri.last_access = int(time.time())
-                    pri.access_count += 1
-                    self.db.add(pri)
-                    self.db.commit()
-                except KeyError:
-                    raise tornado.web.HTTPError(400)
-            elif app.state == '2':
-                if app.access_left <=0:
-                    raise tornado.web.HTTPError(404)  # access denied
-                app.access_left -= 1
-                self.db.add(app)
-                self.db.commit() 
-                try:
-                    self.unitsmap[API](user)
-                    pri.last_access = int(time.time())
-                    pri.access_count += 1
-                    self.db.add(pri)
-                    self.db.commit()
-                except KeyError:
-                    raise tornado.web.HTTPError(400)
-            else:
-                raise tornado.web.HTTPError(401)
+            # check user state
+            if user.state == 0:
+                self.user_locked(user)
+            
+            # change app api access left
+            if app.state == '2' or 64<ord(app.state)<91:    
+                if app.access_left <= 0:
+                    self.api_deny()
+                else:
+                    app.access_left -= 1
+                    self.db.add(app)
+                    self.db.commit() 
+            
+            # call api
+            try:
+                self.unitsmap[app.state.lower()][API](user)
+                pri.last_access = int(time.time())
+                pri.access_count += 1
+                self.db.add(pri)
+                self.db.commit()
+            except KeyError:
+                self.api_error(user)
+
         except NoResultFound:
             raise tornado.web.HTTPError(401) 
 
+    def api_error(self, user):
+        raise tornado.web.HTTPError(400)
+
+    def api_deny(self, user):
+        raise tornado.web.HTTPError(404)
+
+    def user_locked(self, user):
+        raise tornado.web.HTTPError(401)
 
     @tornado.gen.engine
+    @tornado.web.asynchronous
     def api_post(self, url, data):
         try:
             client = AsyncHTTPClient()
@@ -182,6 +200,7 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'user', {'number':user.cardnum, 'password':user.password})
 
     @tornado.gen.engine
+    @tornado.web.asynchronous
     def emptyroom(self, user):
         try:
             arg5 = self.get_argument('arg5')
