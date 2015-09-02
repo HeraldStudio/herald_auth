@@ -45,6 +45,7 @@ class APIHandler(tornado.web.RequestHandler):
             'phylab': self.phylab,
             'emptyroom': self.emptyroom,
             'lecturenotice': self.lecturenotice,
+            'room':self.room,
             'user': self.user
         }       
         
@@ -195,6 +196,9 @@ class APIHandler(tornado.web.RequestHandler):
 
     def lecturenotice(self, user):
         self.api_post(API_URL+'lecturenotice', '')
+
+    def room(self,user):
+        self.api_post(API_URL+'room',{'number':user.cardnum, 'password':user.password})
 
     def user(self, user):
         self.api_post(API_URL+'user', {'number':user.cardnum, 'password':user.password})
