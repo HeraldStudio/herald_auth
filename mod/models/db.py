@@ -6,8 +6,8 @@
 import os
 
 DB_HOST = 'localhost'
-DB_USER = 'herald_auth'
-DB_PWD = 'herald'
+DB_USER = 'root'
+DB_PWD = '084358'
 DB_NAME = 'herald_auth'
 
 from sqlalchemy import create_engine
