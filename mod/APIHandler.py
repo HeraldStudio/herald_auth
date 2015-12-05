@@ -47,6 +47,7 @@ class APIHandler(tornado.web.RequestHandler):
             'lecturenotice': self.lecturenotice,
             'room':self.room,
             'yuyue':self.yuyue,
+            'exam':self.exam,
             'user': self.user
         }       
         
@@ -202,6 +203,8 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'room',{'number':user.cardnum, 'password':user.password})
     def yuyue(self,user):
         self.api_post(API_URL+'auth',{'cardnum':user.cardnum, 'password':user.password})
+    def exam(self,user):
+        self.api_post(API_URL+'exam',{'cardnum':user.cardnum, 'password':user.password})
 
     def user(self, user):
         self.api_post(API_URL+'user', {'number':user.cardnum, 'password':user.password})
