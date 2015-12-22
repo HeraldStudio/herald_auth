@@ -48,6 +48,7 @@ class APIHandler(tornado.web.RequestHandler):
             'room':self.room,
             'yuyue':self.yuyue,
             'exam':self.exam,
+            'tice':self.tice,
             'user': self.user
         }       
         
@@ -205,44 +206,14 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'auth',{'cardnum':user.cardnum, 'password':user.password})
     def exam(self,user):
         self.api_post(API_URL+'exam',{'cardnum':user.cardnum, 'password':user.password})
+    def tice(self,user):
+        self.api_post(API_URL+'tice',{'cardnum':user.cardnum, 'password':user.password})
 
     def user(self, user):
         self.api_post(API_URL+'user', {'number':user.cardnum, 'password':user.password})
 
-    @tornado.gen.engine
-    @tornado.web.asynchronous
     def emptyroom(self, user):
-        try:
-            arg5 = self.get_argument('arg5')
-            if not arg5:
-                arg5[xxxx]
-            url = API_URL+'query/%s/%s/%s/%s/%s' % (
-                self.get_argument('arg1'),
-                self.get_argument('arg2'),
-                self.get_argument('arg3'),
-                self.get_argument('arg4'),
-                arg5
-                )
-        except:
-            url = API_URL+'query/%s/%s/%s/%s' % (
-                self.get_argument('arg1'),
-                self.get_argument('arg2'),
-                self.get_argument('arg3'),
-                self.get_argument('arg4')
-                )
-        try:
-            client = AsyncHTTPClient()
-            request = HTTPRequest(
-                url,
-                method='GET',
-                request_timeout=CONNECT_TIME_OUT)
-            response = yield tornado.gen.Task(client.fetch, request)
-            body = response.body
-            if body:
-                self.write(body)
-            else:
-                raise tornado.web.HTTPError(408) # time out
-            self.finish()
-        except HTTPError:
-            self.write('services are unreachable')
-            self.finish()
+        url = self.get_argument('url',None)
+        method = self.get_argument('method',None)
+        data = self.get_argument('data',None)
+        self.api_post(API_URL+'query',{'url':url,'method':method,'data':data})
