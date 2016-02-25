@@ -31,6 +31,7 @@ class APIHandler(tornado.web.RequestHandler):
             'curriculum': self.curriculum,
             'gpa': self.gpa,
             'pe': self.pe,
+            'pedetail':self.pedetail,
             'simsimi': self.simsimi,
             'nic': self.nic,
             'card': self.card,
@@ -149,7 +150,14 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'sidebar', {'cardnum':user.cardnum, 'term':TERM})
 
     def curriculum(self, user):
-        self.api_post(API_URL+'curriculum', {'cardnum':user.cardnum, 'term':TERM})
+        curriculumTerm = self.get_argument('term',default=None)
+        term = ""
+        if curriculumTerm:
+            term = curriculumTerm
+        else:
+            term = TERM
+        date = self.get_argument('date',default=-1)
+        self.api_post(API_URL+'curriculum', {'cardnum':user.cardnum, 'term':term,'date':date})
 
     def gpa(self, user):
         self.api_post(API_URL+'gpa', {'username':user.cardnum, 'password':user.password})
@@ -160,7 +168,8 @@ class APIHandler(tornado.web.RequestHandler):
         else:
             pwd = user.pe_password
         self.api_post(API_URL+'pe', {'cardnum':user.cardnum, 'pwd':pwd})
-
+    def pedetail(self,user):
+        self.api_post(API_URL+'pedetail', {'cardnum':user.cardnum, 'password':user.password})
     def simsimi(self, user):
         self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx'), 'uid': self.uuid})
 
