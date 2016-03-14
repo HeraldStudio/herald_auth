@@ -37,6 +37,7 @@ class APIHandler(tornado.web.RequestHandler):
             'card': self.card,
             'lecture': self.lecture,
             'library': self.library,
+            'library_hot':self.library_hot,
             'renew': self.renew,
             'search': self.search,
             'pc': self.pc,
@@ -184,6 +185,8 @@ class APIHandler(tornado.web.RequestHandler):
 
     def library(self, user):
         self.api_post(API_URL+'library', {'cardnum':user.lib_username, 'password':user.lib_password})
+    def library_hot(self,user):
+        self.api_post(API_URL+'library_hot',{})
 
     def renew(self, user):
         self.api_post(API_URL+'renew', {'cardnum':user.lib_username, 'password':user.lib_password, 'barcode':self.get_argument('barcode')})
