@@ -142,6 +142,8 @@ class APIHandler(tornado.web.RequestHandler):
         self.db.close()
 
     def srtp(self, user):
+        schoolnum = self.get_argument('schoolnum',default=None)
+        user.number = schoolnum if schoolnum else user.number
         self.api_post(API_URL+'srtp', {'number':user.number})
 
     def term(self, user):
@@ -215,7 +217,13 @@ class APIHandler(tornado.web.RequestHandler):
     def room(self,user):
         self.api_post(API_URL+'room',{'number':user.cardnum, 'password':user.password})
     def yuyue(self,user):
-        self.api_post(API_URL+'auth',{'cardnum':user.cardnum, 'password':user.password})
+        key = ['method','itemId','dayInfo','time','cardNo','orderVO.useMode','orderVO.useTime','orderVO.itemId','orderVO.phone','useUserIds']
+        data = {'cardnum':user.cardnum, 'password':user.password}
+        for i in key:
+            value = self.get_argument(i,default=None)
+            if value:
+                data[i] = value
+        self.api_post(API_URL+'yuyue',data)
     def exam(self,user):
         self.api_post(API_URL+'exam',{'cardnum':user.cardnum, 'password':user.password})
     def tice(self,user):

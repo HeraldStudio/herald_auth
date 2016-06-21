@@ -5,5 +5,5 @@
 
 API_URL = 'http://127.0.0.1/webserv2/'
 CONNECT_TIME_OUT = 18
-TERM = '15-16-2'
+TERM = '15-16-3'
 
