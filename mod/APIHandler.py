@@ -66,7 +66,7 @@ class APIHandler(tornado.web.RequestHandler):
         return mapTable
 
     def get(self, API):
-        self.render('index.html')
+        self.render('index.htm',compress_whitespace=False)
         #self.finish()
 
     @tornado.web.asynchronous

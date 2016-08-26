@@ -73,7 +73,7 @@ class AuthHandler(tornado.web.RequestHandler):
         except NoResultFound:
             try:
                 while 1:
-                    token = sha1(user+str(time())+'HearldAuth').hexdigest()
+                    token = sha1(user+str(time())+'').hexdigest()
                     r = self.db.query(Privilege).filter(
                         Privilege.uuid == token).count()
                     if r == 0:
