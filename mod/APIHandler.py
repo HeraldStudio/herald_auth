@@ -31,11 +31,13 @@ class APIHandler(tornado.web.RequestHandler):
             'curriculum': self.curriculum,
             'gpa': self.gpa,
             'pe': self.pe,
+            'pedetail':self.pedetail,
             'simsimi': self.simsimi,
             'nic': self.nic,
             'card': self.card,
             'lecture': self.lecture,
             'library': self.library,
+	    'library_hot':self.library_hot,
             'renew': self.renew,
             'search': self.search,
             'pc': self.pc,
@@ -46,6 +48,9 @@ class APIHandler(tornado.web.RequestHandler):
             'emptyroom': self.emptyroom,
             'lecturenotice': self.lecturenotice,
             'room':self.room,
+            'yuyue':self.yuyue,
+            'exam':self.exam,
+            'tice':self.tice,
             'user': self.user
         }       
         
@@ -61,9 +66,8 @@ class APIHandler(tornado.web.RequestHandler):
         return mapTable
 
     def get(self, API):
-        self.render('index.html')
+        self.render('index.htm')
         #self.finish()
-
     @tornado.web.asynchronous
     def post(self, API):
         self.uuid = self.get_argument('uuid')
@@ -103,7 +107,6 @@ class APIHandler(tornado.web.RequestHandler):
 
         except NoResultFound:
             raise tornado.web.HTTPError(401) 
-
     def api_error(self, user):
         raise tornado.web.HTTPError(400)
 
@@ -137,6 +140,8 @@ class APIHandler(tornado.web.RequestHandler):
         self.db.close()
 
     def srtp(self, user):
+	schoolnum = self.get_argument('schoolnum',default=None)
+        user.number = schoolnum if schoolnum else user.number
         self.api_post(API_URL+'srtp', {'number':user.number})
 
     def term(self, user):
@@ -146,7 +151,14 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'sidebar', {'cardnum':user.cardnum, 'term':TERM})
 
     def curriculum(self, user):
-        self.api_post(API_URL+'curriculum', {'cardnum':user.cardnum, 'term':TERM})
+        curriculumTerm = self.get_argument('term',default=None)
+        term = ""
+        if curriculumTerm:
+            term = curriculumTerm
+        else:
+            term = TERM
+        date = self.get_argument('date',default=-1)
+        self.api_post(API_URL+'curriculum', {'cardnum':user.cardnum, 'term':term,'date':date})
 
     def gpa(self, user):
         self.api_post(API_URL+'gpa', {'username':user.cardnum, 'password':user.password})
@@ -157,9 +169,10 @@ class APIHandler(tornado.web.RequestHandler):
         else:
             pwd = user.pe_password
         self.api_post(API_URL+'pe', {'cardnum':user.cardnum, 'pwd':pwd})
-
+    def pedetail(self,user):
+        self.api_post(API_URL+'pedetail', {'cardnum':user.cardnum, 'password':user.password})
     def simsimi(self, user):
-        self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx'), 'uid': self.uuid})
+        self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx'), 'uid': user.cardnum})
 
     def nic(self, user):
         self.api_post(API_URL+'nic', {'cardnum':user.cardnum, 'password':user.password})
@@ -171,8 +184,12 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL+'lecture', {'cardnum':user.cardnum, 'password':user.password})
 
     def library(self, user):
-        self.api_post(API_URL+'library', {'cardnum':user.lib_username, 'password':user.lib_password})
-
+	if not user.lib_username:
+	    self.api_post(API_URL+'library', {'cardnum':user.cardnum, 'password':user.cardnum})
+	else:
+            self.api_post(API_URL+'library', {'cardnum':user.lib_username, 'password':user.lib_password})
+    def library_hot(self,user):
+	self.api_post(API_URL+'library_hot',{})
     def renew(self, user):
         self.api_post(API_URL+'renew', {'cardnum':user.lib_username, 'password':user.lib_password, 'barcode':self.get_argument('barcode')})
 
@@ -199,44 +216,24 @@ class APIHandler(tornado.web.RequestHandler):
 
     def room(self,user):
         self.api_post(API_URL+'room',{'number':user.cardnum, 'password':user.password})
+    def yuyue(self,user):
+	key = ['method','itemId','id','dayInfo','time','cardNo','orderVO.useMode','orderVO.useTime','orderVO.itemId','orderVO.phone','useUserIds','orderVO.remark']
+        data = {'cardnum':user.cardnum, 'password':user.password}
+        for i in key:
+            value = self.get_argument(i,default=None)
+            if value:
+                data[i] = value
+        self.api_post(API_URL+'yuyue',data)
+    def exam(self,user):
+        self.api_post(API_URL+'exam',{'cardnum':user.cardnum, 'password':user.password})
+    def tice(self,user):
+        self.api_post(API_URL+'tice',{'cardnum':user.cardnum, 'password':user.password})
 
     def user(self, user):
         self.api_post(API_URL+'user', {'number':user.cardnum, 'password':user.password})
 
-    @tornado.gen.engine
-    @tornado.web.asynchronous
     def emptyroom(self, user):
-        try:
-            arg5 = self.get_argument('arg5')
-            if not arg5:
-                arg5[xxxx]
-            url = API_URL+'query/%s/%s/%s/%s/%s' % (
-                self.get_argument('arg1'),
-                self.get_argument('arg2'),
-                self.get_argument('arg3'),
-                self.get_argument('arg4'),
-                arg5
-                )
-        except:
-            url = API_URL+'query/%s/%s/%s/%s' % (
-                self.get_argument('arg1'),
-                self.get_argument('arg2'),
-                self.get_argument('arg3'),
-                self.get_argument('arg4')
-                )
-        try:
-            client = AsyncHTTPClient()
-            request = HTTPRequest(
-                url,
-                method='GET',
-                request_timeout=CONNECT_TIME_OUT)
-            response = yield tornado.gen.Task(client.fetch, request)
-            body = response.body
-            if body:
-                self.write(body)
-            else:
-                raise tornado.web.HTTPError(408) # time out
-            self.finish()
-        except HTTPError:
-            self.write('services are unreachable')
-            self.finish()
+        url = self.get_argument('url',None)
+        method = self.get_argument('method',None)
+        data = self.get_argument('data',None)
+        self.api_post(API_URL+'query',{'url':url,'method':method,'data':data})

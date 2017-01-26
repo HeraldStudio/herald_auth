@@ -12,6 +12,7 @@ from models.user import User
 from models.privilege import Privilege
 from models.app import Application
 from check_password import check_password
+import IPython
 
 class AuthHandler(tornado.web.RequestHandler):
 
@@ -29,13 +30,13 @@ class AuthHandler(tornado.web.RequestHandler):
         pwd = self.get_argument('password')
         appid = self.get_argument('appid') 
         if not (user and pwd and appid):
-            raise tornado.web.HTTPError(400)
+            raise tornado.web.HTTPError(401)
             self.finish()
 
         if not self.user_check(user, pwd):
             raise tornado.web.HTTPError(401)
             self.finish()
-
+        
         try:
             app = self.db.query(Application).filter(
                 Application.uuid == appid).one()
@@ -49,14 +50,12 @@ class AuthHandler(tornado.web.RequestHandler):
         try:
             u = self.db.query(User).filter(
                 User.cardnum == user).one()
-            if u.password != pwd:
-                if check_password(user, pwd):
-                    u.password = pwd
-                    self.db.add(u)
-                    self.db.commit()
-                    return True
-                return False
-            return True           
+            if check_password(user, pwd):
+                u.password = pwd
+                self.db.add(u)
+                self.db.commit()
+                return True
+            return False
         except NoResultFound:
             if check_password(user, pwd):
                 u = User(cardnum=user, password=pwd, state=1)

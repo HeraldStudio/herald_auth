@@ -34,7 +34,7 @@ class AuthCenter(tornado.web.Application):
         ]
         settings = dict(
             cookie_secret="87C0BB001D10FBF11874589E0AC7823F",
-            debug=False
+            debug=True
         )
         tornado.web.Application.__init__(self, handlers, **settings)
         self.db = scoped_session(sessionmaker(bind=dbengine,

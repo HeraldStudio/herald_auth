@@ -5,6 +5,7 @@
 
 from config import API_URL, CONNECT_TIME_OUT
 from tornado.httpclient import HTTPRequest, HTTPClient, HTTPError
+import IPython
 import urllib
 
 def check_password(cardnum, password):
