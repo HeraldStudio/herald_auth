@@ -8,13 +8,13 @@ import time
 import urllib
 
 import tornado.web
+from mod.models.app import Application
+from mod.models.privilege import Privilege
 from sqlalchemy.orm.exc import NoResultFound
 from tornado.httpclient import HTTPRequest, AsyncHTTPClient, HTTPError
 
 from config import *
-from models.app import Application
-from models.privilege import Privilege
-from models.user import User
+from mod.models.user import User
 
 reload(sys)
 sys.setdefaultencoding('utf8')
