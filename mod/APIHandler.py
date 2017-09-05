@@ -5,6 +5,7 @@
 
 import urllib
 import tornado.web
+import tornado.gen
 from tornado.httpclient import HTTPRequest, AsyncHTTPClient, HTTPError
 from sqlalchemy.orm.exc import NoResultFound
 from models.user import User
@@ -37,7 +38,7 @@ class APIHandler(tornado.web.RequestHandler):
             'card': self.card,
             'lecture': self.lecture,
             'library': self.library,
-	    'library_hot':self.library_hot,
+            'library_hot':self.library_hot,
             'renew': self.renew,
             'search': self.search,
             'pc': self.pc,
@@ -70,7 +71,9 @@ class APIHandler(tornado.web.RequestHandler):
     def get(self, API):
         self.render('index.htm')
         #self.finish()
+
     @tornado.web.asynchronous
+    @tornado.gen.engine
     def post(self, API):
         self.uuid = self.get_argument('uuid')
         #appid = self.get_argument('appid')
@@ -119,7 +122,6 @@ class APIHandler(tornado.web.RequestHandler):
         raise tornado.web.HTTPError(401)
 
     @tornado.gen.engine
-    @tornado.web.asynchronous
     def api_post(self, url, data):
         try:
             client = AsyncHTTPClient()
@@ -141,17 +143,21 @@ class APIHandler(tornado.web.RequestHandler):
     def on_finish(self):
         self.db.close()
 
+    @tornado.gen.engine
     def srtp(self, user):
-	schoolnum = self.get_argument('schoolnum',default=None)
+        schoolnum = self.get_argument('schoolnum',default=None)
         user.number = schoolnum if schoolnum else user.number
         self.api_post(API_URL+'srtp', {'number':user.number})
 
+    @tornado.gen.engine
     def term(self, user):
         self.api_post(API_URL+'term', '')
 
+    @tornado.gen.engine
     def sidebar(self, user):
         self.api_post(API_URL+'sidebar', {'cardnum':user.cardnum, 'term':TERM})
 
+    @tornado.gen.engine
     def curriculum(self, user):
         curriculumTerm = self.get_argument('term',default=None)
         term = ""
@@ -161,65 +167,90 @@ class APIHandler(tornado.web.RequestHandler):
             term = TERM
         self.api_post(API_URL+'curriculum', {'cardnum':user.cardnum, 'term':term})
 
+    @tornado.gen.engine
     def gpa(self, user):
         self.api_post(API_URL+'gpa', {'username':user.cardnum, 'password':user.password})
 
+    @tornado.gen.engine
     def pe(self, user):
         if not user.pe_password:
             pwd = user.cardnum
         else:
             pwd = user.pe_password
         self.api_post(API_URL+'pe', {'cardnum':user.cardnum, 'pwd':pwd})
+
+    @tornado.gen.engine
     def pedetail(self,user):
         self.api_post(API_URL+'pedetail', {'cardnum':user.cardnum, 'password':user.password})
+
+    @tornado.gen.engine
     def simsimi(self, user):
         self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx'), 'uid': user.cardnum})
 
+    @tornado.gen.engine
     def nic(self, user):
         self.api_post(API_URL+'nic', {'cardnum':user.cardnum, 'password':user.password})
 
+    @tornado.gen.engine
     def card(self, user):
         self.api_post(API_URL+'card', {'cardnum':user.cardnum, 'password':user.password, 'timedelta':self.get_argument('timedelta', default='0')})
 
+    @tornado.gen.engine
     def lecture(self, user):
         self.api_post(API_URL+'lecture', {'cardnum':user.cardnum, 'password':user.password})
 
+    @tornado.gen.engine
     def library(self, user):
-	if not user.lib_username:
-	    self.api_post(API_URL+'library', {'cardnum':user.cardnum, 'password':user.cardnum})
-	else:
+        if not user.lib_username:
+            self.api_post(API_URL+'library', {'cardnum':user.cardnum, 'password':user.cardnum})
+        else:
             self.api_post(API_URL+'library', {'cardnum':user.lib_username, 'password':user.lib_password})
+
+    @tornado.gen.engine
     def library_hot(self,user):
-	self.api_post(API_URL+'library_hot',{})
+        self.api_post(API_URL+'library_hot',{})
+
+    @tornado.gen.engine
     def renew(self, user):
         self.api_post(API_URL+'renew', {'cardnum':user.lib_username, 'password':user.lib_password, 'barcode':self.get_argument('barcode')})
 
+    @tornado.gen.engine
     def search(self, user):
         self.api_post(API_URL+'search', {'book':self.get_argument('book')})
 
+    @tornado.gen.engine
     def pc(self, user):
         self.api_post(API_URL+'pc', '')
 
+    @tornado.gen.engine
     def jwc(self, user):
         self.api_post(API_URL+'jwc', '')
 
+    @tornado.gen.engine
     def schoolbus(self, user):
         self.api_post(API_URL+'schoolbus', '')
 
+    @tornado.gen.engine
     def newbus(self, user):
         self.api_post(API_URL+'newbus', '')
     
+    @tornado.gen.engine
     def week(self, user):
         self.api_post(API_URL+'week', '')
 
+    @tornado.gen.engine
     def phylab(self, user):
         self.api_post(API_URL+'phylab', {'number':user.cardnum, 'password':user.password, 'term':TERM})
 
+    @tornado.gen.engine
     def lecturenotice(self, user):
         self.api_post(API_URL+'lecturenotice', '')
 
+    @tornado.gen.engine
     def room(self,user):
         self.api_post(API_URL+'room',{'number':user.cardnum, 'password':user.password})
+
+    @tornado.gen.engine
     def yuyue(self,user):
 	key = ['method','itemId','id','dayInfo','time','cardNo','orderVO.useMode','orderVO.useTime','orderVO.itemId','orderVO.phone','useUserIds','orderVO.remark']
         data = {'cardnum':user.cardnum, 'password':user.password}
@@ -228,20 +259,27 @@ class APIHandler(tornado.web.RequestHandler):
             if value:
                 data[i] = value
         self.api_post(API_URL+'yuyue',data)
+
+    @tornado.gen.engine
     def exam(self,user):
         self.api_post(API_URL+'exam',{'cardnum':user.cardnum, 'password':user.password})
+
+    @tornado.gen.engine
     def tice(self,user):
         self.api_post(API_URL+'tice',{'cardnum':user.cardnum, 'password':user.password})
 
+    @tornado.gen.engine
     def user(self, user):
         self.api_post(API_URL+'user', {'number':user.cardnum, 'password':user.password})
 
+    @tornado.gen.engine
     def emptyroom(self, user):
         url = self.get_argument('url',None)
         method = self.get_argument('method',None)
         data = self.get_argument('data',None)
         self.api_post(API_URL+'query',{'url':url,'method':method,'data':data})
     
+    @tornado.gen.engine
     def newemptyroom(self, user):
         key = ['campusId','date','buildingId','startSequence','endSequence','page','pageSize']
         data = {}
