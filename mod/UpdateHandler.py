@@ -46,7 +46,7 @@ class UpdateHandler(tornado.web.RequestHandler):
         try:
             user = self.db.query(User).filter(
                 User.cardnum == cardnum).one()
-            if user.password == password or check_password(cardnum, password):
+            if check_password(cardnum, password):
                 if number:
                     user.number = number
                 if password:
