@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+  </head>
+  <body>
+    <div class="container"><h1 id="herald-public-web-service"><strong>Herald Public Web Service</strong></h1>
+      <p>此文档仅供内部开发人员使用，请勿分享至无关用户</p>
+      <h4 id="使用前注意"><strong>使用前注意:</strong></h4>
+      <ul>
+        <li>使用前先需要获取APPID</li>
+        <li>所有响应均为格式数据</li>
+      </ul>
+      <h4 id="目录"><strong>目录:</strong></h4>
+      <ul>
+        <li><a href="#%E8%B0%83%E7%94%A8api%E6%B5%81%E7%A8%8B">调用api流程</a></li>
+        <li><a href="#%E8%AE%A4%E8%AF%81%E4%B8%AD%E5%BF%83%E6%8E%A5%E5%8F%A3">认证中心接口</a> <br>
+        <ul><li><a href="#%E6%8E%88%E6%9D%83%E8%AE%A4%E8%AF%81auth">授权认证(auth)</a></li>
+        <li><a href="#uuid%E5%90%88%E6%B3%95%E6%80%A7%E6%A3%80%E6%9F%A5">UUID合法性检查</a></l
+        i>
+        <li><a href="#%E6%9B%B4%E6%96%B0%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AFupdate">更新用户信息(update)</a></li>
+        <li><a href="#%E8%A7%A3%E9%99%A4%E6%8E%88%E6%9D%83deauth">解除授权(deauth)</a></li></ul></li>
+        <li><a href="#%E7%BB%9F%E4%B8%80api%E6%8E%A5%E5%8F%A3">统一API接口</a> <br>
+        <ul><li><a href="#%E8%B0%83%E7%94%A8api%E6%96%B9%E5%BC%8F">调用API方式</a></li>
+        <li><a href="#srtp%E6%9F%A5%E8%AF%A2srtp">SRTP查询(srtp)</a></li>
+        <li><a href="#%E8%8E%B7%E5%8F%96%E8%AF%BE%E8%A1%A8%E5%AD%A6%E6%9C%9Fterm">获取课表学期(term)</a></li>
+        <li><a href="#%E8%AF%BE%E7%A8%8B%E6%9F%A5%E8%AF%A2%E5%90%8D%E7%A7%B0%E5%AD%A6%E5%88%86sidebar">课程查询（名称+学分）(sidebar)</a></li>
+        <li><a href="#%E8%AF%BE%E7%A8%8B%E8%A1%A8%E6%9F%A5%E8%AF%A2curriculum">课程表查询(curriculum)</a></li>
+        <li><a href="#%E7%BB%A9%E7%82%B9%E6%9F%A5%E8%AF%A2gpa">绩点查询(gpa)</a></li>
+        <li><a href="#%E8%B7%91%E6%93%8D%E6%9F%A5%E8%AF%A2pe">跑操查询(pe)</a></li>
+        <li><a href="#%E8%B7%91%E6%93%8D%E8%AF%A6%E7%BB%86%E6%9F%A5%E8%AF%A2pedetail">跑操详细查询(pedetail)</a></li>
+        <li><a href="#%E8%8E%B7%E5%8F%96%E8%B7%91%E6%93%8D%E9%A2%84%E6%8A%A5pc">获取跑操预报(pc)</a></li>
+        <li><a href="#%E8%8E%B7%E5%8F%96%E4%BD%93%E6%B5%8B%E4%BF%A1%E6%81%AFtice">获取体测信息(tice)</a></li>
+        <li><a href="#%E5%B0%8F%E7%8C%B4%E8%B0%83%E6%88%8F%E6%8E%A5%E5%8F%A3simsimi">小猴调戏接口(simsimi)</a></li>
+        <li><a href="#%E4%BA%BA%E6%96%87%E8%AE%B2%E5%BA%A7%E6%9F%A5%E8%AF%A2lecture">人文讲座查询(lecture)</a></li>
+        <li><a href="#%E8%8E%B7%E5%8F%96%E4%BA%BA%E6%96%87%E8%AE%B2%E5%BA%A7%E9%A2%84%E5%91%8Alecturenotice">获取人文讲座预告(lecturenotice)</a></li>
+        <li><a href="#%E4%B8%80%E5%8D%A1%E9%80%9A%E4%BD%99%E9%A2%9D%E6%98%8E%E7%BB%86%E6%9F%A5%E8%AF%A2card">一卡通余额，明细查询(card)</a></li>
+        <li><a href="#%E6%A0%A1%E5%9B%AD%E7%BD%91%E7%94%A8%E6%88%B7%E7%8A%B6%E6%80%81%E6%9F%A5%E8%AF%A2nic">校园网用户状态查询(nic)</a></li>
+        <li><a href="#%E5%9B%BE%E4%B9%A6%E9%A6%86%E5%80%9F%E9%98%85%E5%9B%BE%E4%B9%A6%E6%9F%A5%E8%AF%A2library">图书馆借阅图书查询(library)</a></li>
+        <li><a href="#%E5%9B%BE%E4%B9%A6%E9%A6%86%E5%9B%BE%E4%B9%A6%E7%BB%AD%E5%80%9Frenew">图书馆图书续借(renew)</a></li>
+        <li><a href="#%E5%9B%BE%E4%B9%A6%E9%A6%86%E5%9B%BE%E4%B9%A6%E6%90%9C%E7%B4%A2search">图书馆图书搜索(search)</a></li>
+        <li><a href="#%E8%8E%B7%E5%8F%96%E6%95%99%E5%8A%A1%E5%A4%84%E4%BF%A1%E6%81%AFjwc">获取教务处信息(jwc)</a></li>
+        <li><a href="#%E8%8E%B7%E5%8F%96%E6%A0%A1%E8%BD%A6%E6%97%B6%E5%88%BB%E8%A1%A8schoolbus">获取校车时刻表(schoolbus)</a></li>
+        <li><a href="#%E8%8E%B7%E5%8F%96%E7%89%A9%E7%90%86%E5%AE%9E%E9%AA%8C%E8%AF%BE%E7%A8%8Bphylab">获取物理实验课程(phylab)</a></li>
+        <li><a href="#%E8%8E%B7%E5%8F%96%E5%9F%BA%E6%9C%AC%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AFuser">获取基本个人信息(user)</a></li>
+        <li><a href="#%E8%80%83%E8%AF%95%E5%AE%89%E6%8E%92exam">考试安排(exam)</a></li>
+        <li><a href="#%E5%9C%BA%E9%A6%86%E9%A2%84%E7%BA%A6yuyue">场馆预约(yuyue)</a></li></ul></li>
+        <li><a href="#%E5%85%B6%E4%BB%96API%E6%8E%A5%E5%8F%A3">其他API接口</a> <br>
+        <ul><li><a href="#%E7%94%A8%E6%88%B7%E5%8F%8D%E9%A6%88">用户反馈</a></li>
+        <li><a href="#%E7%A4%BE%E5%9B%A2%E6%B4%BB%E5%8A%A8">社团活动</a></li></ul></li>
+      </ul>
+      <h4 id="调用api流程"><strong>调用api流程</strong></h4>
+      <hr>
+      <ol>
+        <li><p>获得用户统一身份认证信息(用户名+统一身份认证密码)</p>
+        <pre class="prettyprint"><code class=" hljs ini"><span class="hljs-setting">username=<span class="hljs-value"><span class="hljs-number">213150000</span></span></span>
+        <span class="hljs-setting">password=<span class="hljs-value">******</span></span></code></pre></li>
+        <li><p>将认证信息和 APPID 发送至认证中心, 获取用户UUID</p>
+        <pre class="prettyprint"><code class=" hljs http"><span class="hljs-attribute">POST</span>: <span class="hljs-string">http://www.heraldstudio.com/uc/auth </span>
+        <span class="hljs-attribute">DATA</span>: <span class="hljs-string">user=213150000&amp;password=******&amp;appid=******</span>
+        <span class="hljs-attribute">RETURN</span>: <span class="hljs-string">010cd8bd637755999a5da376054753ac6d083f74</span></code></pre></li>
+        <li><p>根据API要求, 发送相应参数和 UUID 至 API 接口</p>
+        <pre class="prettyprint"><code class=" hljs avrasm"><span class="hljs-label">POST:</span> http://www<span class="hljs-preprocessor">.heraldstudio</span><span class="hljs-preprocessor">.com</span>/api/nic  
+        <span class="hljs-label">DATA:</span>
+            uuid=<span class="hljs-number">010</span>cd8bd637755999a5da376054753ac6d083f74
+        <span class="hljs-label">RETURN:</span> 
+        {
+        “a”: { 
+              “state”: “未开通”,
+               “used”: “<span class="hljs-number">0</span> B” 
+             }, 
+         “web”: { 
+                 “state”: “正常,在线”, 
+                 “used”: “<span class="hljs-number">14.95</span> MB” 
+                }, 
+         “b”: { 
+               “state”: “离线”, “
+               used”: “<span class="hljs-number">371</span>,<span class="hljs-number">856</span>,<span class="hljs-number">152</span> B” 
+             },
+         “left”: “<span class="hljs-number">9.88</span> 元” 
+        }
+        <span class="hljs-label">POST:</span> http://www<span class="hljs-preprocessor">.heraldstudio</span><span class="hljs-preprocessor">.com</span>/api/simsimi 
+        <span class="hljs-label">DATA:</span> uuid=<span class="hljs-number">010</span>cd8bd637755999a5da376054753ac6d083f74&amp;msg=你好
+        <span class="hljs-label">RETURN:</span> 亲爱的，我非常好，有你更美好</code></pre></li>
+      </ol>
+      <h4 id="认证中心接口"><strong>认证中心接口</strong></h4>
+      <hr>
+      <h6 id="授权认证auth"><strong>授权认证(auth)</strong></h6>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">描述</th>
+            <th align="left">获取用户唯一标识符 UUID</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">URL</td>
+          <td align="left"><a href="http://www.heraldstudio.com/uc/auth">http://www.heraldstudio.com/uc/auth</a></td>
+        </tr>
+        <tr>
+          <td align="left">Method</td>
+          <td align="left">POST</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">user</td>
+          <td align="left">一卡通</td>
+        </tr>
+        <tr>
+          <td align="left">password</td>
+          <td align="left">统一身份认证密码</td>
+        </tr>
+        <tr>
+          <td align="left">appid</td>
+          <td align="left">APPID</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">返回值</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">用户唯一标识符（UUID）</td>
+          <td align="left">请求成功</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 400</td>
+          <td align="left">参数错误或appid不存在</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 401</td>
+          <td align="left">授权失败(用户名密码不匹配)</td>
+        </tr>
+      </tbody></table>
+      <h6 id="uuid合法性检查"><strong>UUID合法性检查</strong></h6>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">描述</th>
+            <th align="left">检测当前 UUID 是否合法</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">URL</td>
+          <td align="left"><a href="http://www.heraldstudio.com/uc/check">http://www.heraldstudio.com/uc/check</a></td>
+        </tr>
+        <tr>
+          <td align="left">Method</td>
+          <td align="left">POST</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">uuid</td>
+          <td align="left">用户唯一标识符</td>
+        </tr>
+        <tr>
+          <td align="left">appid</td>
+          <td align="left">应用唯一标识符</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">返回值</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">用户一卡通号</td>
+          <td align="left">UUID合法</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 400</td>
+          <td align="left">参数错误或</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 401</td>
+          <td align="left">UUID不合法</td>
+        </tr>
+      </tbody></table>
+      <h6 id="更新用户信息update"><strong>更新用户信息(update)</strong></h6>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">描述</th>
+            <th align="left">更新用户基本信息</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">URL</td>
+          <td align="left"><a href="http://www.heraldstudio.com/uc/update">http://www.heraldstudio.com/uc/update</a></td>
+        </tr>
+        <tr>
+          <td align="left">Method</td>
+          <td align="left">POST</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">cardnum</td>
+          <td align="left">一卡通</td>
+        </tr>
+        <tr>
+          <td align="left">password</td>
+          <td align="left">统一身份认证密码</td>
+        </tr>
+        <tr>
+          <td align="left">*number</td>
+          <td align="left">可选:学号</td>
+        </tr>
+        <tr>
+          <td align="left">*pe_password</td>
+          <td align="left">可选:跑操查询密码</td>
+        </tr>
+        <tr>
+          <td align="left">*lib_username</td>
+          <td align="left">可选:图书馆用户名</td>
+        </tr>
+        <tr>
+          <td align="left">*lib_password</td>
+          <td align="left">可选:图书馆密码</td>
+        </tr>
+        <tr>
+          <td align="left">*card_query_password</td>
+          <td align="left">可选:一卡通查询密码</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">返回值</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">‘OK’</td>
+          <td align="left">更新成功</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 400</td>
+          <td align="left">参数错误</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 401</td>
+          <td align="left">用户密码错误</td>
+        </tr>
+      </tbody></table>
+      <h6 id="解除授权deauth"><strong>解除授权(deauth)</strong></h6>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">描述</th>
+            <th align="left">注销 UUID, 注销后的 UUID 不能再被使用</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">URL</td>
+          <td align="left"><a href="http://www.heraldstudio.com/uc/deauth">http://www.heraldstudio.com/uc/deauth</a></td>
+        </tr>
+        <tr>
+          <td align="left">Method</td>
+          <td align="left">POST</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">uuid</td>
+          <td align="left">用户唯一标识符</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">返回值</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">‘OK’</td>
+          <td align="left">注销成功</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 400</td>
+          <td align="left">参数错误</td>
+        </tr>
+      </tbody></table>
+      <h4 id="统一api接口"><strong>统一API接口</strong></h4>
+      <hr>
+      <h6 id="调用api方式"><strong>调用API方式</strong></h6>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">描述</th>
+            <th align="left">调用统一API接口</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">URL</td>
+          <td align="left"><a href="http://www.heraldstudio.com/api/[API_NAME]">http://www.heraldstudio.com/api/[API_NAME]</a></td>
+        </tr>
+        <tr>
+          <td align="left">Method</td>
+          <td align="left">POST</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">uuid</td>
+          <td align="left">用户唯一标识符</td>
+        </tr>
+        <tr>
+          <td align="left">*[opt]</td>
+          <td align="left">API其它参数</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">返回值</th>
+            <th align="left">含义</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">HTTP 200</td>
+          <td align="left">API返回内容</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 400</td>
+          <td align="left">参数错误</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 401</td>
+          <td align="left">UUID不合法</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 404</td>
+          <td align="left">APPID 请求次数耗尽</td>
+        </tr>
+        <tr>
+          <td align="left">HTTPError 408</td>
+          <td align="left">API 请求超时</td>
+        </tr>
+      </tbody></table>
+      <hr>
+      <h5 id="srtp查询srtp"><strong>SRTP查询(srtp)</strong></h5>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">描述</th>
+            <th align="left">查询用户的SRTP学分</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td align="left">API_NAME</td>
+          <td align="left">srtp</td>
+        </tr>
+      </tbody></table>
+      <h5 id="return-json"><strong>Return Json</strong></h5>
+      <pre class="prettyprint"><code class=" hljs json">[
+          <span class="hljs-string">"content"</span>:[
+              {
+                "<span class="hljs-attribute">score</span>": <span class="hljs-value"><span class="hljs-string">"SRTP状态"</span></span>, 
+                "<span class="hljs-attribute">total</span>": <span class="hljs-value"><span class="hljs-string">"总SRTP学分"</span></span>, 
+                "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"姓名"</span></span>, 
+                "<span class="hljs-attribute">card number</span>": <span class="hljs-value"><span class="hljs-string">"学号"</span>
+            </span>}, 
+            {
+              "<span class="hljs-attribute">credit</span>": <span class="hljs-value"><span class="hljs-string">"学分"</span></span>, 
+              "<span class="hljs-attribute">proportion</span>": <span class="hljs-value"><span class="hljs-string">"比例"</span></span>, 
+              "<span class="hljs-attribute">project</span>": <span class="hljs-value"><span class="hljs-string">"项目名称"</span></span>, 
+              "<span class="hljs-attribute">department</span>": <span class="hljs-value"><span class="hljs-string">"认定院系"</span></span>,
+              "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"获得日期"</span></span>, 
+              "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"学分类型"</span></span>, 
+              "<span class="hljs-attribute">total credit</span>": <span class="hljs-value"><span class="hljs-string">"总学分"</span>
+          </span>}, 
+          {
+            "<span class="hljs-attribute">credit</span>": <span class="hljs-value"><span class="hljs-string">"学分"</span></span>, 
+            "<span class="hljs-attribute">proportion</span>": <span class="hljs-value"><span class="hljs-string">"比例"</span></span>, 
+            "<span class="hljs-attribute">project</span>": <span class="hljs-value"><span class="hljs-string">"项目名称"</span></span>, 
+            "<span class="hljs-attribute">department</span>": <span class="hljs-value"><span class="hljs-string">"认定院系"</span></span>,
+            "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"获得日期"</span></span>, 
+            "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"学分类型"</span></span>, 
+            "<span class="hljs-attribute">total credit</span>": <span class="hljs-value"><span class="hljs-string">"总学分"</span>
+        </span>},  
+        ...
+      ],
+    <span class="hljs-string">"code"</span>:<span class="hljs-number">200</span>
+]</code></pre>
+<table>
+  <thead>
+    <tr>
+      <th align="left">code</th>
+      <th align="left">含义</th>
+    </tr>
+  </thead>
+  <tbody><tr>
+    <td align="left">200</td>
+    <td align="left">成功返回</td>
+  </tr>
+  <tr>
+    <td align="left">400</td>
+    <td align="left">参数错误</td>
+  </tr>
+  <tr>
+    <td align="left">401</td>
+    <td align="left">学号不存在</td>
+  </tr>
+  <tr>
+    <td align="left">408</td>
+    <td align="left">访问超时</td>
+  </tr>
+</tbody></table>
+<hr>
+<h5 id="获取课表学期term"><strong>获取课表学期(term)</strong></h5>
+<table>
+  <thead>
+    <tr>
+      <th align="left">描述</th>
+      <th align="left">获取学期列表</th>
+    </tr>
+  </thead>
+  <tbody><tr>
+    <td align="left">API_NAME</td>
+    <td align="left">term</td>
+  </tr>
+</tbody></table>
+<h5 id="return-json-1"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>": <span class="hljs-value">[
+      <span class="hljs-string">"15-16-3"</span>, 
+      <span class="hljs-string">"15-16-2"</span>, 
+      <span class="hljs-string">"15-16-1"</span>, 
+      <span class="hljs-string">"14-15-3"</span>, 
+      <span class="hljs-string">"14-15-2"</span>, 
+      <span class="hljs-string">"14-15-1"</span>, 
+      <span class="hljs-string">"13-14-3"</span>, 
+      <span class="hljs-string">"13-14-2"</span>, 
+      <span class="hljs-string">"13-14-1"</span>, 
+      <span class="hljs-string">"12-13-3"</span>, 
+      <span class="hljs-string">"12-13-2"</span>, 
+      <span class="hljs-string">"12-13-1"</span>
+  ]</span>, 
+  "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+  <tr>
+    <th align="left">code</th>
+    <th align="left">含义</th>
+  </tr>
+</thead>
+<tbody><tr>
+  <td align="left">200</td>
+  <td align="left">成功返回</td>
+</tr>
+<tr>
+  <td align="left">408</td>
+  <td align="left">访问超时</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="课程查询名称学分sidebar"><strong>课程查询（名称+学分）(sidebar)</strong></h5>
+<table>
+<thead>
+  <tr>
+    <th align="left">描述</th>
+    <th align="left">查询用户课程名称,授课老师等</th>
+  </tr>
+</thead>
+<tbody><tr>
+  <td align="left">API_NAME</td>
+  <td align="left">sidebar</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-2"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+  "<span class="hljs-attribute">content</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">lecturer</span>": <span class="hljs-value"><span class="hljs-string">"授课老师"</span></span>, 
+      "<span class="hljs-attribute">course</span>": <span class="hljs-value"><span class="hljs-string">"课程名称"</span></span>, 
+      "<span class="hljs-attribute">week</span>": <span class="hljs-value"><span class="hljs-string">"上课周数"</span></span>, 
+      "<span class="hljs-attribute">credit</span>": <span class="hljs-value"><span class="hljs-string">"学分"</span>
+    </span>}, 
+    ...
+  ]</span>, 
+  "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">用户不存在</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="课程表查询curriculum"><strong>课程表查询(curriculum)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询用户课程名称,授课老师等</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">curriculum</td>
+</tr>
+<tr>
+<td align="left">*date</td>
+<td align="left">可选:查询日期(带有这个参数才会返回正确的week)</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-3"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs r">{
+    <span class="hljs-string">"content"</span>:
+        {
+            <span class="hljs-string">"Mon"</span>: [],
+            <span class="hljs-string">"Tue"</span>: [
+              [
+                 <span class="hljs-string">"课程名称"</span>,
+                 <span class="hljs-string">"[上课周数]上课时间"</span>,
+                 <span class="hljs-string">"上课地点"</span>
+              ],
+              <span class="hljs-keyword">...</span>
+            ],
+        <span class="hljs-string">"Wed"</span>: [],
+        <span class="hljs-string">"Thu"</span>: [
+            [
+                <span class="hljs-string">"课程名称"</span>,
+                <span class="hljs-string">"[上课周数]上课时间"</span>,
+                <span class="hljs-string">"上课地点"</span>
+            ],
+            <span class="hljs-keyword">...</span>
+        ],
+        <span class="hljs-string">"Fri"</span>: [],
+        <span class="hljs-string">"Sat"</span>: [],
+        <span class="hljs-string">"Sun"</span>: []
+        },
+        <span class="hljs-string">"startdate"</span>: {
+          <span class="hljs-string">"day"</span>: 学期开始日期, 
+          <span class="hljs-string">"month"</span>: 学期开始月份
+        }
+    }
+    <span class="hljs-string">"week"</span>: <span class="hljs-string">""</span>, 
+    <span class="hljs-string">"code"</span>: <span class="hljs-number">200</span>
+}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">用户不存在</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="绩点查询gpa"><strong>绩点查询(gpa)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询用户绩点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">gpa</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-4"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>":
+    <span class="hljs-value">[
+        {
+            "<span class="hljs-attribute">gpa</span>": <span class="hljs-value"><span class="hljs-string">"平均绩点"</span></span>,
+            "<span class="hljs-attribute">gpa without revamp</span>": <span class="hljs-value"><span class="hljs-string">"首修绩点"</span></span>,
+            "<span class="hljs-attribute">calculate time</span>": <span class="hljs-value"><span class="hljs-string">"计算时间"</span></span>,
+        },
+        {
+            "<span class="hljs-attribute">semester</span>": <span class="hljs-value"><span class="hljs-string">"学期"</span></span>,
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"课程名称"</span></span>,
+            "<span class="hljs-attribute">credit</span>": <span class="hljs-value"><span class="hljs-string">"学分"</span></span>,
+            "<span class="hljs-attribute">score</span>": <span class="hljs-value"><span class="hljs-string">"成绩"</span></span>,
+            "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"类型"</span></span>,
+            "<span class="hljs-attribute">extra</span>": <span class="hljs-value"><span class="hljs-string">"备注"</span>
+        </span>},
+        {
+            "<span class="hljs-attribute">semester</span>": <span class="hljs-value"><span class="hljs-string">"学期"</span></span>,
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"课程名称"</span></span>,
+            "<span class="hljs-attribute">credit</span>": <span class="hljs-value"><span class="hljs-string">"学分"</span></span>,
+            "<span class="hljs-attribute">score</span>": <span class="hljs-value"><span class="hljs-string">"成绩"</span></span>,
+            "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"类型"</span></span>,
+            "<span class="hljs-attribute">extra</span>": <span class="hljs-value"><span class="hljs-string">"备注"</span>
+        </span>},
+        ...
+    ]</span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="跑操查询pe"><strong>跑操查询(pe)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询用户跑操次数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">pe</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-5"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>": <span class="hljs-value"><span class="hljs-string">"跑操次数"</span></span>,
+    "<span class="hljs-attribute">remain</span>":<span class="hljs-value"><span class="hljs-string">"距离跑操结束时间"</span></span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="跑操详细查询pedetail"><strong>跑操详细查询(pedetail)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">跑操详细查询</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">pedetail</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-6"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs r">{
+  <span class="hljs-string">"content"</span>: [
+    {
+      <span class="hljs-string">"sign_time"</span>: <span class="hljs-string">"7.15"</span>, 
+      <span class="hljs-string">"sign_date"</span>: <span class="hljs-string">"2016-02-03"</span>, 
+      <span class="hljs-string">"sign_effect"</span>: <span class="hljs-string">"有效"</span>
+    }, 
+    <span class="hljs-keyword">...</span>
+  ], 
+  <span class="hljs-string">"code"</span>: <span class="hljs-number">200</span>
+}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="获取跑操预报pc"><strong>获取跑操预报(pc)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">获取当天是否跑操</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">pc</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-7"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs bash">{
+    <span class="hljs-string">"content"</span>: <span class="hljs-string">"今天正常跑操"</span>,
+    <span class="hljs-string">"code"</span>: <span class="hljs-number">200</span>
+}
+或
+{
+    <span class="hljs-string">"content"</span>: <span class="hljs-string">"今天不跑操"</span>,
+    <span class="hljs-string">"code"</span>: <span class="hljs-number">200</span>
+}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">201</td>
+<td align="left">正在刷新缓存</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="获取体测信息tice"><strong>获取体测信息(tice)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">获取体测信息</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">tice</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-8"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs cs">{
+  <span class="hljs-string">"content"</span>: {
+    <span class="hljs-string">"jump"</span>: {<span class="hljs-comment">//立定跳远</span>
+      <span class="hljs-string">"comment"</span>: <span class="hljs-string">"评分"</span>, 
+      <span class="hljs-string">"score"</span>: <span class="hljs-string">"得分"</span>, 
+      <span class="hljs-string">"value"</span>: <span class="hljs-string">"成绩值"</span>
+    }, 
+    <span class="hljs-string">"zuoqian"</span>: {<span class="hljs-comment">//坐位体前屈</span>
+      <span class="hljs-string">"comment"</span>: <span class="hljs-string">"评分"</span>, 
+      <span class="hljs-string">"score"</span>: <span class="hljs-string">"得分"</span>, 
+      <span class="hljs-string">"value"</span>: <span class="hljs-string">"成绩值"</span>
+    }, 
+    <span class="hljs-string">"1000meter"</span>: {<span class="hljs-comment">//1000/800米</span>
+      <span class="hljs-string">"comment"</span>: <span class="hljs-string">"评分"</span>, 
+      <span class="hljs-string">"score"</span>: <span class="hljs-string">"得分"</span>, 
+      <span class="hljs-string">"value"</span>: <span class="hljs-string">"成绩值"</span>
+    }, 
+    <span class="hljs-string">"score"</span>: <span class="hljs-string">"总成绩值"</span>, 
+    <span class="hljs-string">"weight"</span>: <span class="hljs-string">"体重成绩值"</span>, 
+    <span class="hljs-string">"up-down"</span>: {<span class="hljs-comment">//引体向上/仰卧起坐</span>
+      <span class="hljs-string">"comment"</span>: <span class="hljs-string">"评分"</span>, 
+      <span class="hljs-string">"score"</span>: <span class="hljs-string">"得分"</span>, 
+      <span class="hljs-string">"value"</span>: <span class="hljs-string">"成绩值"</span>
+    }, 
+    <span class="hljs-string">"50meter"</span>: {<span class="hljs-comment">//50米</span>
+      <span class="hljs-string">"comment"</span>: <span class="hljs-string">"评分"</span>, 
+      <span class="hljs-string">"score"</span>: <span class="hljs-string">"得分"</span>, 
+      <span class="hljs-string">"value"</span>: <span class="hljs-string">"成绩值"</span>
+    }, 
+    <span class="hljs-string">"fei"</span>: {<span class="hljs-comment">//肺活量</span>
+      <span class="hljs-string">"comment"</span>: <span class="hljs-string">"良好"</span>, 
+      <span class="hljs-string">"score"</span>: <span class="hljs-string">"得分"</span>, 
+      <span class="hljs-string">"value"</span>: <span class="hljs-string">"成绩值"</span>
+    }, 
+    <span class="hljs-string">"height"</span>: <span class="hljs-string">"身高成绩值"</span>
+  }, 
+  <span class="hljs-string">"code"</span>: <span class="hljs-number">200</span>
+}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="小猴调戏接口simsimi"><strong>小猴调戏接口(simsimi)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">与聊天机器人进行互动</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">simsimi</td>
+</tr>
+<tr>
+<td align="left">msg</td>
+<td align="left">发送的信息</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-9"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs ">直接返回相应文本内容</code></pre>
+<hr>
+<h5 id="人文讲座查询lecture"><strong>人文讲座查询(lecture)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询用户人文讲座次数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">lecture</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-10"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>":
+    <span class="hljs-value">{
+        "<span class="hljs-attribute">count</span>": <span class="hljs-value"><span class="hljs-number">6</span></span>,
+        "<span class="hljs-attribute">detial</span>": <span class="hljs-value">[
+            {
+                "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2013-11-07 18:04:28"</span></span>,
+                "<span class="hljs-attribute">place</span>": <span class="hljs-value"><span class="hljs-string">"教学3号楼团委报告厅"</span>
+            </span>},
+            {
+                "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2013-11-08 18:04:28"</span></span>,
+                "<span class="hljs-attribute">place</span>": <span class="hljs-value"><span class="hljs-string">"教学3号楼团委报告厅"</span>
+            </span>},
+            ...
+        ]
+    </span>}</span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="获取人文讲座预告lecturenotice"><strong>获取人文讲座预告(lecturenotice)</strong></h5>
+<p>*获取人文讲座预告接口与其他api接口稍有不同，不需要uuid，调用时请注意</p>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询用户人文讲座次数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">URL</td>
+<td align="left"><a href="http://www.heraldsutio.com/wechat2/lecture">http://www.heraldsutio.com/wechat2/lecture</a></td>
+</tr>
+<tr>
+<td align="left">Method</td>
+<td align="left">POST</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-11"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>": <span class="hljs-value">[
+        {
+            "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"3月21日 6：00"</span></span>,
+            "<span class="hljs-attribute">topic</span>": <span class="hljs-value"><span class="hljs-string">"测试方法论"</span></span>,
+            "<span class="hljs-attribute">speaker</span>": <span class="hljs-value"><span class="hljs-string">"测试人"</span></span>,
+            "<span class="hljs-attribute">location</span>": <span class="hljs-value"><span class="hljs-string">"人文讲座报告厅"</span></span>,
+            "<span class="hljs-attribute">detail</span>": <span class="hljs-value"><span class="hljs-string">""</span>
+        </span>},
+        {
+            "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"3月21日 6：00"</span></span>,
+            "<span class="hljs-attribute">topic</span>": <span class="hljs-value"><span class="hljs-string">"测试方法论"</span></span>,
+            "<span class="hljs-attribute">speaker</span>": <span class="hljs-value"><span class="hljs-string">"测试人"</span></span>,
+            "<span class="hljs-attribute">location</span>": <span class="hljs-value"><span class="hljs-string">"人文讲座报告厅"</span></span>,
+            "<span class="hljs-attribute">detail</span>": <span class="hljs-value"><span class="hljs-string">""</span>
+        </span>}
+    ]</span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="一卡通余额明细查询card"><strong>一卡通余额，明细查询(card)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询用户一卡通余额以及消费明细</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">card</td>
+</tr>
+<tr>
+<td align="left">*timedelta</td>
+<td align="left">可选：查询最近timedelta天内交易明细，留空仅查询余额(没有detial),timedelta为1时查询当日消费明细</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-12"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>":
+    <span class="hljs-value">{
+        "<span class="hljs-attribute">state</span>": <span class="hljs-value"><span class="hljs-string">"正常"</span></span>,
+        "<span class="hljs-attribute">detial</span>":
+        <span class="hljs-value">[
+            {
+                "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2014/12/09 17:04:03"</span></span>,
+                "<span class="hljs-attribute">price</span>": <span class="hljs-value"><span class="hljs-string">"-13.00"</span></span>,
+                "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"持卡人消费"</span></span>,
+                "<span class="hljs-attribute">system</span>": <span class="hljs-value"><span class="hljs-string">"梅园食堂商务子系统"</span></span>,
+                "<span class="hljs-attribute">left</span>": <span class="hljs-value"><span class="hljs-string">"13.31"</span>
+            </span>},
+            {
+                "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2014/12/09 13:47:42"</span></span>,
+                "<span class="hljs-attribute">price</span>": <span class="hljs-value"><span class="hljs-string">"-0.50"</span></span>,
+                "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"持卡人消费"</span></span>,
+                "<span class="hljs-attribute">system</span>": <span class="hljs-value"><span class="hljs-string">"以太网POS子系统"</span></span>,
+                "<span class="hljs-attribute">left</span>": <span class="hljs-value"><span class="hljs-string">"24.58"</span>
+            </span>},
+            ...
+        ]</span>,
+        "<span class="hljs-attribute">left</span>": <span class="hljs-value"><span class="hljs-string">"4.81"</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="校园网用户状态查询nic"><strong>校园网用户状态查询(nic)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询用户校园网信息</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">nic</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-13"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>":
+        <span class="hljs-value">{
+            "<span class="hljs-attribute">a</span>": <span class="hljs-value">{
+                "<span class="hljs-attribute">state</span>": <span class="hljs-value"><span class="hljs-string">"未开通"</span></span>,
+                "<span class="hljs-attribute">used</span>": <span class="hljs-value"><span class="hljs-string">"0 B"</span></span>,
+                }</span>,
+            "<span class="hljs-attribute">b</span>": <span class="hljs-value">{
+                "<span class="hljs-attribute">state</span>": <span class="hljs-value"><span class="hljs-string">"离线"</span></span>,
+                "<span class="hljs-attribute">used</span>": <span class="hljs-value"><span class="hljs-string">"345,125,123 B"</span></span>,
+                }</span>,
+            "<span class="hljs-attribute">web</span>": <span class="hljs-value">{
+                "<span class="hljs-attribute">state</span>": <span class="hljs-value"><span class="hljs-string">"正常"</span></span>,
+                "<span class="hljs-attribute">used</span>": <span class="hljs-value"><span class="hljs-string">"128.4 KB"</span></span>,
+            }</span>,
+            "<span class="hljs-attribute">left</span>": <span class="hljs-value"><span class="hljs-string">"9.88"</span>
+        </span>}</span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="图书馆借阅图书查询library"><strong>图书馆借阅图书查询(library)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询图书管已借阅的图书</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">library</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-14"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>":<span class="hljs-value">[
+        {
+            "<span class="hljs-attribute">due_date</span>": <span class="hljs-value"><span class="hljs-string">"2014-11-17"</span></span>,
+            "<span class="hljs-attribute">author</span>": <span class="hljs-value"><span class="hljs-string">"徐森林，薛春华编著"</span></span>,
+            "<span class="hljs-attribute">barcode</span>": <span class="hljs-value"><span class="hljs-string">"2296308"</span></span>,
+            "<span class="hljs-attribute">render_date</span>": <span class="hljs-value"><span class="hljs-string">"2014-10-18"</span></span>,
+            "<span class="hljs-attribute">place</span>": <span class="hljs-value"><span class="hljs-string">"中文图书阅览室（3）"</span></span>,
+            "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"实变函数论"</span></span>,
+            "<span class="hljs-attribute">renew_time</span>": <span class="hljs-value"><span class="hljs-string">"0"</span>
+        </span>},
+        {
+            "<span class="hljs-attribute">due_date</span>": <span class="hljs-value"><span class="hljs-string">"2014-11-26"</span></span>,
+            "<span class="hljs-attribute">author</span>": <span class="hljs-value"><span class="hljs-string">"(韩) 李承远著"</span></span>,
+            "<span class="hljs-attribute">barcode</span>": <span class="hljs-value"><span class="hljs-string">"2774224"</span></span>,
+            "<span class="hljs-attribute">render_date</span>": <span class="hljs-value"><span class="hljs-string">"2014-10-27"</span></span>,
+            "<span class="hljs-attribute">place</span>": <span class="hljs-value"><span class="hljs-string">"中文图书阅览室（4）"</span></span>,
+            "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"逆向工程核心原理"</span></span>,
+            "<span class="hljs-attribute">renew_time</span>": <span class="hljs-value"><span class="hljs-string">"0"</span>
+        </span>},
+        ...
+    ]</span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="图书馆图书续借renew"><strong>图书馆图书续借(renew)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">对图书馆已借阅的图书进行续借</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">renew</td>
+</tr>
+<tr>
+<td align="left">barcode</td>
+<td align="left">图书条码号</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-15"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>": <span class="hljs-value"><span class="hljs-string">"success"</span></span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="图书馆图书搜索search"><strong>图书馆图书搜索(search)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">搜索图书馆在馆图书(仅返回前20条)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">search</td>
+</tr>
+<tr>
+<td align="left">book</td>
+<td align="left">检索的关键字</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-16"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>":
+    <span class="hljs-value">[
+        {
+            "<span class="hljs-attribute">index</span>": <span class="hljs-value"><span class="hljs-string">"H33-44/12"</span></span>,
+            "<span class="hljs-attribute">all</span>": <span class="hljs-value"><span class="hljs-string">"2"</span></span>,
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"德福考试高分突破真题集"</span></span>,
+            "<span class="hljs-attribute">author</span>": <span class="hljs-value"><span class="hljs-string">"(德) 德福考试院编"</span></span>,
+            "<span class="hljs-attribute">publish</span>": <span class="hljs-value"><span class="hljs-string">"外语教学与研究出版社2011"</span></span>,
+            "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"中文图书"</span></span>,
+            "<span class="hljs-attribute">left</span>": <span class="hljs-value"><span class="hljs-string">"1"</span>
+        </span>},
+        {
+            "<span class="hljs-attribute">index</span>": <span class="hljs-value"><span class="hljs-string">"TP368/P949"</span></span>,
+            "<span class="hljs-attribute">all</span>": <span class="hljs-value"><span class="hljs-string">"1"</span></span>,
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Testing complex and embedded systems /"</span></span>,
+            "<span class="hljs-attribute">author</span>": <span class="hljs-value"><span class="hljs-string">"Kim H. Pries, Jon M. Quigley."</span></span>,
+            "<span class="hljs-attribute">publish</span>": <span class="hljs-value"><span class="hljs-string">"CRC Press,2011."</span></span>,
+            "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"西文图书"</span></span>,
+            "<span class="hljs-attribute">left</span>": <span class="hljs-value"><span class="hljs-string">"1"</span>
+        </span>},
+        ...
+    ]</span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="获取教务处信息jwc"><strong>获取教务处信息(jwc)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">获取教务处通知信息</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">jwc</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-17"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs r">{
+    <span class="hljs-string">"content"</span>: {
+        <span class="hljs-string">"最新动态"</span>: [
+            {
+                <span class="hljs-string">"date"</span>: <span class="hljs-string">"2014-11-05"</span>,
+                <span class="hljs-string">"href"</span>: <span class="hljs-string">"http://jwc.seu.edu.cn/s/99/t/2128/e4/48/info123976.htm"</span>,
+                <span class="hljs-string">"title"</span>: <span class="hljs-string">"2014-2015-2学期期中考试查询通知"</span>
+            },
+            <span class="hljs-keyword">...</span>
+        ],
+        <span class="hljs-string">"教务信息"</span>: [
+            <span class="hljs-keyword">...</span>
+        ],
+        <span class="hljs-string">"学籍管理"</span>: [
+            <span class="hljs-keyword">...</span>
+        ],
+        <span class="hljs-string">"实践教学"</span>: [
+            <span class="hljs-keyword">...</span>
+        ],
+        <span class="hljs-string">"合作办学"</span>: [
+            <span class="hljs-keyword">...</span>
+        ]
+    },
+    <span class="hljs-string">"code"</span>: <span class="hljs-number">200</span>
+}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="获取校车时刻表schoolbus"><strong>获取校车时刻表(schoolbus)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">获取校车时刻表</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">schoolbus</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-18"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+  "<span class="hljs-attribute">content</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">weekend</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">前往地铁站</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">bus</span>": <span class="hljs-value"><span class="hljs-string">"每 30min 一班"</span></span>, 
+          "<span class="hljs-attribute">time</span>": <span class="hljs-value"><span class="hljs-string">"8:00-9:30"</span>
+        </span>}, 
+        {
+          "<span class="hljs-attribute">bus</span>": <span class="hljs-value"><span class="hljs-string">"每 1h 一班"</span></span>, 
+          "<span class="hljs-attribute">time</span>": <span class="hljs-value"><span class="hljs-string">"9:30-11:30"</span>
+        </span>}, 
+        ...
+      ]</span>, 
+      "<span class="hljs-attribute">返回九龙湖</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">bus</span>": <span class="hljs-value"><span class="hljs-string">"每 30min 一班"</span></span>, 
+          "<span class="hljs-attribute">time</span>": <span class="hljs-value"><span class="hljs-string">"8:00-9:30"</span>
+        </span>}, 
+        {
+          "<span class="hljs-attribute">bus</span>": <span class="hljs-value"><span class="hljs-string">"每 1h 一班"</span></span>, 
+          "<span class="hljs-attribute">time</span>": <span class="hljs-value"><span class="hljs-string">"9:30-11:30"</span>
+        </span>}, 
+        ...
+      ]
+    </span>}</span>, 
+    "<span class="hljs-attribute">weekday</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">前往地铁站</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">bus</span>": <span class="hljs-value"><span class="hljs-string">"每 10min 一班"</span></span>, 
+          "<span class="hljs-attribute">time</span>": <span class="hljs-value"><span class="hljs-string">"7:10-10:00"</span>
+        </span>}, 
+        {
+          "<span class="hljs-attribute">bus</span>": <span class="hljs-value"><span class="hljs-string">"每 30min 一班"</span></span>, 
+          "<span class="hljs-attribute">time</span>": <span class="hljs-value"><span class="hljs-string">"10:00-11:30"</span>
+        </span>}, 
+        ...
+      ]</span>, 
+      "<span class="hljs-attribute">返回九龙湖</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">bus</span>": <span class="hljs-value"><span class="hljs-string">"每 10min 一班"</span></span>, 
+          "<span class="hljs-attribute">time</span>": <span class="hljs-value"><span class="hljs-string">"7:10-10:00"</span>
+        </span>}, 
+        {
+          "<span class="hljs-attribute">bus</span>": <span class="hljs-value"><span class="hljs-string">"每 30min 一班"</span></span>, 
+          "<span class="hljs-attribute">time</span>": <span class="hljs-value"><span class="hljs-string">"10:00-11:30"</span>
+        </span>}, 
+        ...
+      ]
+    </span>}
+  </span>}</span>, 
+  "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="获取物理实验课程phylab"><strong>获取物理实验课程(phylab)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">获取物理实验课程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">phylab</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-19"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+  "<span class="hljs-attribute">content</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">文科及医学实验选做</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, 
+    "<span class="hljs-attribute">文科及医学实验</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>, 
+    "<span class="hljs-attribute">基础性实验(下)</span>": <span class="hljs-value">[
+      {
+        "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"迈克尔逊干涉仪"</span></span>, 
+        "<span class="hljs-attribute">Grade</span>": <span class="hljs-value"><span class="hljs-string">"76"</span></span>, 
+        "<span class="hljs-attribute">Day</span>": <span class="hljs-value"><span class="hljs-string">"晚上"</span></span>, 
+        "<span class="hljs-attribute">Address</span>": <span class="hljs-value"><span class="hljs-string">"319"</span></span>, 
+        "<span class="hljs-attribute">Date</span>": <span class="hljs-value"><span class="hljs-string">"2014年11月24日"</span></span>, 
+        "<span class="hljs-attribute">Teacher</span>": <span class="hljs-value"><span class="hljs-string">"刘金金"</span>
+      </span>}, 
+      ...
+    ]</span>, 
+    "<span class="hljs-attribute">基础性实验(下)选做</span>": <span class="hljs-value">[
+      {
+        "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"声速测定"</span></span>, 
+        "<span class="hljs-attribute">Grade</span>": <span class="hljs-value"><span class="hljs-string">"80"</span></span>, 
+        "<span class="hljs-attribute">Day</span>": <span class="hljs-value"><span class="hljs-string">"下午"</span></span>, 
+        "<span class="hljs-attribute">Address</span>": <span class="hljs-value"><span class="hljs-string">"411"</span></span>, 
+        "<span class="hljs-attribute">Date</span>": <span class="hljs-value"><span class="hljs-string">"2014年12月1日"</span></span>, 
+        "<span class="hljs-attribute">Teacher</span>": <span class="hljs-value"><span class="hljs-string">"范宝路"</span>
+      </span>}, 
+      ...
+    ]
+  </span>}</span>, 
+  "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="获取基本个人信息user"><strong>获取基本个人信息(user)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">获取个人信息</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">user</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-20"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+    "<span class="hljs-attribute">content</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">sex</span>": <span class="hljs-value"><span class="hljs-string">"性别"</span></span>,
+        "<span class="hljs-attribute">cardnum</span>": <span class="hljs-value"><span class="hljs-string">"一卡通号"</span></span>,
+        "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"姓名"</span></span>,
+        "<span class="hljs-attribute">schoolnum</span>": <span class="hljs-value"><span class="hljs-string">"学号"</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="考试安排exam"><strong>考试安排(exam)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询用户考试安排</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">lecture</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-21"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+  "<span class="hljs-attribute">content</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">hour</span>": <span class="hljs-value"><span class="hljs-string">"120"</span></span>, 
+      "<span class="hljs-attribute">course</span>": <span class="hljs-value"><span class="hljs-string">"思想道德修养与法律基础"</span></span>, 
+      "<span class="hljs-attribute">location</span>": <span class="hljs-value"><span class="hljs-string">"教六-201"</span></span>, 
+      "<span class="hljs-attribute">time</span>": <span class="hljs-value"><span class="hljs-string">"2016-06-06 18:30(星期一)"</span></span>, 
+      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"正常"</span></span>, 
+      "<span class="hljs-attribute">teacher</span>": <span class="hljs-value"><span class="hljs-string">"邱峰"</span>
+    </span>}, 
+    ...
+  ]</span>, 
+  "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="场馆预约yuyue"><strong>场馆预约(yuyue)</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">场馆预约</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API_NAME</td>
+<td align="left">lecture</td>
+</tr>
+<tr>
+<td align="left">method</td>
+<td align="left">操作名称</td>
+</tr>
+<tr>
+<td align="left">*para</td>
+<td align="left">操作对应的参数</td>
+</tr>
+</tbody></table>
+<h4 id="method对应需要的参数"><strong>method对应需要的参数</strong></h4>
+<pre class="prettyprint"><code class=" hljs ruby">{
+        <span class="hljs-string">'getDate'</span><span class="hljs-symbol">:</span>{
+            <span class="hljs-string">'param'</span><span class="hljs-symbol">:[]</span>
+        },
+        <span class="hljs-string">'myOrder'</span><span class="hljs-symbol">:</span>{
+            <span class="hljs-string">'param'</span><span class="hljs-symbol">:[]</span>
+        },
+        <span class="hljs-string">'cancelUrl'</span><span class="hljs-symbol">:</span>{
+            <span class="hljs-string">'param'</span><span class="hljs-symbol">:</span>[<span class="hljs-string">'id'</span>]
+        },
+        <span class="hljs-string">'getOrder'</span><span class="hljs-symbol">:</span>{
+            <span class="hljs-string">'param'</span><span class="hljs-symbol">:</span>[<span class="hljs-string">'itemId'</span>,<span class="hljs-string">'dayInfo'</span>]
+        },
+        <span class="hljs-string">'judgeOrder'</span><span class="hljs-symbol">:</span>{
+            <span class="hljs-string">'param'</span><span class="hljs-symbol">:</span>[<span class="hljs-string">'itemId'</span>,<span class="hljs-string">'dayInfo'</span>,<span class="hljs-string">'time'</span>]
+        },
+        <span class="hljs-string">'getPhone'</span><span class="hljs-symbol">:</span>{
+            <span class="hljs-string">'param'</span><span class="hljs-symbol">:[]</span>
+        },
+        <span class="hljs-string">'getFriendList'</span><span class="hljs-symbol">:</span>{
+            <span class="hljs-string">'param'</span><span class="hljs-symbol">:</span>[<span class="hljs-string">'cardNo'</span>]
+        },
+        <span class="hljs-string">'new'</span><span class="hljs-symbol">:</span>{
+            <span class="hljs-string">'param'</span><span class="hljs-symbol">:</span>[<span class="hljs-string">'orderVO.useMode'</span>,<span class="hljs-string">'orderVO.useTime'</span>,<span class="hljs-string">'orderVO.itemId'</span>,<span class="hljs-string">'orderVO.phone'</span>,<span class="hljs-string">'useUserIds'</span>,<span class="hljs-string">'orderVO.remark'</span>]
+        }
+}</code></pre>
+<h5 id="example"><strong>Example</strong></h5>
+<pre class="prettyprint"><code class=" hljs http"><span class="hljs-attribute">POST</span>: <span class="hljs-string">http://www.heraldstudio.com/api/yuyue</span>
+<span class="hljs-attribute">DATA</span>: <span class="hljs-string">uuid=****&amp;method=judgeOrder&amp;&amp;itemId=1&amp;dayInfo=2016-07-01&amp;time=14:00-15:00</span>
+<span class="hljs-attribute">RETURN</span>: <span class="hljs-string">010cd8bd637755999a5da376054753ac6d083f74</span>
+<span class="avrasm"><span class="hljs-label">Tip:</span>
+useUserIds格式为[<span class="hljs-string">"1234"</span>,<span class="hljs-string">"5678"</span>]</span></code></pre>
+<h5 id="return-json-22"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs cs">{
+    <span class="hljs-string">"content"</span>:
+    {
+        <span class="hljs-comment">//相应方法对应的内容</span>
+    },
+    <span class="hljs-string">"code"</span>: <span class="hljs-number">200</span>
+}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">统一身份认证失败</td>
+</tr>
+<tr>
+<td align="left">408</td>
+<td align="left">访问超时</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h4 id="其他api接口"><strong>其他API接口</strong></h4>
+<hr>
+<h5 id="用户反馈"><strong>用户反馈</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询用户人文讲座次数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">URL</td>
+<td align="left"><a href="http://www.heraldstudio.com/service/feedback">http://www.heraldstudio.com/service/feedback</a></td>
+</tr>
+<tr>
+<td align="left">Method</td>
+<td align="left">POST</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">参数</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">cardnum</td>
+<td align="left">用户一卡通号</td>
+</tr>
+<tr>
+<td align="left">content</td>
+<td align="left">用户反馈内容</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-23"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs bash">{
+    <span class="hljs-string">'code'</span>:<span class="hljs-number">200</span>,
+    <span class="hljs-string">'content'</span>:<span class="hljs-string">'小猴收到啦~感谢您的反馈'</span>
+}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h5 id="社团活动"><strong>社团活动</strong></h5>
+<table>
+<thead>
+<tr>
+<th align="left">描述</th>
+<th align="left">查询近期社团活动</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">URL</td>
+<td align="left"><a href="http://www.heraldstudio.com/herald/api/v1/huodong/get">http://www.heraldstudio.com/herald/api/v1/huodong/get</a></td>
+</tr>
+<tr>
+<td align="left">Method</td>
+<td align="left">GET</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">参数</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">*type</td>
+<td align="left">可选：分为热门和一般活动，取值为hot</td>
+</tr>
+<tr>
+<td align="left">*page</td>
+<td align="left">可选：页数</td>
+</tr>
+</tbody></table>
+<h5 id="return-json-24"><strong>Return Json</strong></h5>
+<pre class="prettyprint"><code class=" hljs json">{
+  "<span class="hljs-attribute">content</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"活动名称"</span></span>, 
+      "<span class="hljs-attribute">introduction</span>": <span class="hljs-value"><span class="hljs-string">"介绍"</span></span>, 
+      "<span class="hljs-attribute">start_time</span>": <span class="hljs-value"><span class="hljs-string">"活动展示开始时间"</span></span>, 
+      "<span class="hljs-attribute">end_time</span>": <span class="hljs-value"><span class="hljs-string">"活动展示结束时间"</span></span>, 
+      "<span class="hljs-attribute">activity_time</span>": <span class="hljs-value"><span class="hljs-string">"活动时间"</span></span>, 
+      "<span class="hljs-attribute">detail_url</span>": <span class="hljs-value"><span class="hljs-string">"详情链接"</span></span>, 
+      "<span class="hljs-attribute">pic_url</span>": <span class="hljs-value"><span class="hljs-string">"图片链接"</span></span>, 
+      "<span class="hljs-attribute">association</span>": <span class="hljs-value"><span class="hljs-string">"发布组织"</span></span>, 
+      "<span class="hljs-attribute">location</span>": <span class="hljs-value"><span class="hljs-string">"地点"</span>
+    </span>}, 
+    ...
+  ]</span>, 
+  "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">200</span>
+</span>}</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">code</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功返回</td>
+</tr>
+<tr>
+<td align="left">400</td>
+<td align="left">参数缺少</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">系统错误</td>
+</tr>
+</tbody></table>
+<p>Tip: <br>
+发布地址：<a href="http://www.heraldstudio.com/herald/api/v1/huodong/commit">http://www.heraldstudio.com/herald/api/v1/huodong/commit</a></p>
+<hr></div></body>
+</html>

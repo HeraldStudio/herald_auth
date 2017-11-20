@@ -3,9 +3,12 @@
 # @Date    : 2014-10-29 22:59:56
 # @Author  : yml_bright@163.com
 
-from config import API_URL, CONNECT_TIME_OUT
-from tornado.httpclient import HTTPRequest, HTTPClient, HTTPError
 import urllib
+
+from tornado.httpclient import HTTPRequest, HTTPClient, HTTPError
+
+from config import API_URL, CONNECT_TIME_OUT
+
 
 def check_password(cardnum, password):
     data = {

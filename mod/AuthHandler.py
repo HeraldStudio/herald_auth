@@ -3,15 +3,18 @@
 # @Date    : 2014-10-26 12:55:44
 # @Author  : yml_bright@163.com
 
-import tornado.web
-from sqlalchemy.sql import and_
-from sqlalchemy.orm.exc import NoResultFound
-from time import time
 from hashlib import sha1
-from models.user import User
-from models.privilege import Privilege
-from models.app import Application
+from time import time
+
+import tornado.web
+from mod.models.app import Application
+from mod.models.privilege import Privilege
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.sql import and_
+
 from check_password import check_password
+from mod.models.user import User
+
 
 class AuthHandler(tornado.web.RequestHandler):
 
@@ -35,7 +38,7 @@ class AuthHandler(tornado.web.RequestHandler):
         if not self.user_check(user, pwd):
             raise tornado.web.HTTPError(401)
             self.finish()
-
+        
         try:
             app = self.db.query(Application).filter(
                 Application.uuid == appid).one()

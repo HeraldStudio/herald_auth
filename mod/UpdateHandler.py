@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import tornado.web
-from sqlalchemy.sql import and_
 from sqlalchemy.orm.exc import NoResultFound
-from models.user import User
+from sqlalchemy.sql import and_
+
 from check_password import check_password
+from mod.models.user import User
+
 
 class UpdateHandler(tornado.web.RequestHandler):
 

@@ -3,22 +3,24 @@
 # @Date    : 2014-10-26 16:31:03
 # @Author  : yml_bright@163.com
 
-import urllib
-import tornado.web
-import tornado.gen
-from tornado.httpclient import HTTPRequest, AsyncHTTPClient, HTTPError
-from sqlalchemy.orm.exc import NoResultFound
-from models.user import User
-from models.privilege import Privilege
-from models.app import Application
-from config import *
+import sys
 import time
-import sys  
-reload(sys)  
+import urllib
+
+import tornado.web
+from mod.models.app import Application
+from mod.models.privilege import Privilege
+from sqlalchemy.orm.exc import NoResultFound
+from tornado.httpclient import HTTPRequest, AsyncHTTPClient, HTTPError
+
+from config import *
+from mod.models.user import User
+
+reload(sys)
 sys.setdefaultencoding('utf8')
 
-class APIHandler(tornado.web.RequestHandler):
 
+class APIHandler(tornado.web.RequestHandler):
     @property
     def db(self):
         return self.application.db
@@ -32,13 +34,12 @@ class APIHandler(tornado.web.RequestHandler):
             'curriculum': self.curriculum,
             'gpa': self.gpa,
             'pe': self.pe,
-            'pedetail':self.pedetail,
-            'simsimi': self.simsimi,
+            'pedetail': self.pedetail,
             'nic': self.nic,
             'card': self.card,
             'lecture': self.lecture,
             'library': self.library,
-            'library_hot':self.library_hot,
+            'library_hot': self.library_hot,
             'renew': self.renew,
             'search': self.search,
             'pc': self.pc,
@@ -48,19 +49,19 @@ class APIHandler(tornado.web.RequestHandler):
             'week': self.week,
             'phylab': self.phylab,
             'emptyroom': self.emptyroom,
-            'newemptyroom': self.newemptyroom,
+           # 'newemptyroom': self.newemptyroom,
             'lecturenotice': self.lecturenotice,
-            'room':self.room,
-            'yuyue':self.yuyue,
-            'exam':self.exam,
-            'tice':self.tice,
+            'room': self.room,
+            'yuyue': self.yuyue,
+            'exam': self.exam,
+            'tice': self.tice,
             'user': self.user
-        }       
-        
+        }
+
         mapTable = {
-        '1': allAPI,
-        '2': allAPI,
-        'a': {
+            '1': allAPI,
+            '2': allAPI,
+            'a': {
                 'week': self.week,
                 'user': self.user
             }
@@ -70,13 +71,12 @@ class APIHandler(tornado.web.RequestHandler):
 
     def get(self, API):
         raise tornado.web.HTTPError(404)
-    #    #self.finish()
 
     @tornado.web.asynchronous
     @tornado.gen.engine
     def post(self, API):
         self.uuid = self.get_argument('uuid')
-        #appid = self.get_argument('appid')
+        # appid = self.get_argument('appid')
         if not (self.uuid):
             raise tornado.web.HTTPError(400)
 
@@ -90,17 +90,17 @@ class APIHandler(tornado.web.RequestHandler):
             # check user state
             if user.state == 0:
                 self.user_locked(user)
-            
+
             # change app api access left
-            if app.state == '2' or 64<ord(app.state)<91:    
+            if app.state == '2' or 64 < ord(app.state) < 91:
                 if app.access_left <= 0:
                     self.api_deny()
                 else:
                     app.access_left -= 1
                     self.db.add(app)
-                    self.db.commit() 
-            
-            # call api
+                    self.db.commit()
+
+                    # call api
             try:
                 self.unitsmap[app.state.lower()][API](user)
                 pri.last_access = int(time.time())
@@ -112,6 +112,7 @@ class APIHandler(tornado.web.RequestHandler):
 
         except NoResultFound:
             raise tornado.web.HTTPError(401) 
+
     def api_error(self, user):
         raise tornado.web.HTTPError(400)
 
@@ -134,7 +135,7 @@ class APIHandler(tornado.web.RequestHandler):
             if body:
                 self.write(body)
             else:
-                raise tornado.web.HTTPError(408) # time out
+                raise tornado.web.HTTPError(408)  # time out
             self.finish()
         except HTTPError:
             self.write('services are unreachable')
@@ -145,31 +146,32 @@ class APIHandler(tornado.web.RequestHandler):
 
     @tornado.gen.engine
     def srtp(self, user):
-        schoolnum = self.get_argument('schoolnum',default=None)
+        schoolnum = self.get_argument('schoolnum', default=None)
         user.number = schoolnum if schoolnum else user.number
-        self.api_post(API_URL+'srtp', {'number':user.number})
+        self.api_post(API_URL + 'srtp', {'number': user.number})
 
     @tornado.gen.engine
     def term(self, user):
-        self.api_post(API_URL+'term', '')
+        self.api_post(API_URL + 'term', '')
 
     @tornado.gen.engine
     def sidebar(self, user):
-        self.api_post(API_URL+'sidebar', {'cardnum':user.cardnum, 'term':TERM})
+        self.api_post(API_URL + 'sidebar', {'cardnum': user.cardnum, 'term': TERM})
 
     @tornado.gen.engine
     def curriculum(self, user):
-        curriculumTerm = self.get_argument('term',default=None)
+        curriculumTerm = self.get_argument('term', default=None)
         term = ""
         if curriculumTerm:
             term = curriculumTerm
         else:
             term = TERM
-        self.api_post(API_URL+'curriculum', {'cardnum':user.cardnum, 'term':term})
+        date = self.get_argument('date', default=-1)
+        self.api_post(API_URL + 'curriculum', {'cardnum': user.cardnum, 'term': term, 'date': date})
 
     @tornado.gen.engine
     def gpa(self, user):
-        self.api_post(API_URL+'gpa', {'username':user.cardnum, 'password':user.password})
+        self.api_post(API_URL + 'gpa', {'username': user.cardnum, 'password': user.password})
 
     @tornado.gen.engine
     def pe(self, user):
@@ -177,58 +179,58 @@ class APIHandler(tornado.web.RequestHandler):
             pwd = user.cardnum
         else:
             pwd = user.pe_password
-        self.api_post(API_URL+'pe', {'cardnum':user.cardnum, 'pwd':pwd})
+        self.api_post(API_URL + 'pe', {'cardnum': user.cardnum, 'pwd': pwd})
+
+    def pedetail(self, user):
+        self.api_post(API_URL + 'pedetail', {'cardnum': user.cardnum, 'password': user.password})
 
     @tornado.gen.engine
     def pedetail(self,user):
         self.api_post(API_URL+'pedetail', {'cardnum':user.cardnum, 'password':user.password})
 
     @tornado.gen.engine
-    def simsimi(self, user):
-        self.api_post(API_URL+'simsimi', {'msg':self.get_argument('msg', default='xxxx'), 'uid': user.cardnum})
-
-    @tornado.gen.engine
     def nic(self, user):
-        self.api_post(API_URL+'nic', {'cardnum':user.cardnum, 'password':user.password})
+        self.api_post(API_URL + 'nic', {'cardnum': user.cardnum, 'password': user.password})
 
     @tornado.gen.engine
     def card(self, user):
-        self.api_post(API_URL+'card', {'cardnum':user.cardnum, 'password':user.password, 'timedelta':self.get_argument('timedelta', default='0')})
+        self.api_post(API_URL + 'card', {'cardnum': user.cardnum, 'password': user.password,
+                                         'timedelta': self.get_argument('timedelta', default='0')})
 
     @tornado.gen.engine
     def lecture(self, user):
-        self.api_post(API_URL+'lecture', {'cardnum':user.cardnum, 'password':user.password})
+        self.api_post(API_URL + 'lecture', {'cardnum': user.cardnum, 'password': user.password})
 
     @tornado.gen.engine
     def library(self, user):
         if not user.lib_username:
-            self.api_post(API_URL+'library', {'cardnum':user.cardnum, 'password':user.cardnum})
+            self.api_post(API_URL + 'library', {'cardnum': user.cardnum, 'password': user.cardnum})
         else:
-            self.api_post(API_URL+'library', {'cardnum':user.lib_username, 'password':user.lib_password})
+            self.api_post(API_URL + 'library', {'cardnum': user.lib_username, 'password': user.lib_password})
 
-    @tornado.gen.engine
-    def library_hot(self,user):
-        self.api_post(API_URL+'library_hot',{})
+    def library_hot(self, user):
+        self.api_post(API_URL + 'library_hot', {})
 
     @tornado.gen.engine
     def renew(self, user):
-        self.api_post(API_URL+'renew', {'cardnum':user.lib_username, 'password':user.lib_password, 'barcode':self.get_argument('barcode')})
+        self.api_post(API_URL + 'renew', {'cardnum': user.lib_username, 'password': user.lib_password,
+                                          'barcode': self.get_argument('barcode')})
 
     @tornado.gen.engine
     def search(self, user):
-        self.api_post(API_URL+'search', {'book':self.get_argument('book')})
+        self.api_post(API_URL + 'search', {'book': self.get_argument('book')})
 
     @tornado.gen.engine
     def pc(self, user):
-        self.api_post(API_URL+'pc', '')
+        self.api_post(API_URL + 'pc', '')
 
     @tornado.gen.engine
     def jwc(self, user):
-        self.api_post(API_URL+'jwc', '')
+        self.api_post(API_URL + 'jwc', '')
 
     @tornado.gen.engine
     def schoolbus(self, user):
-        self.api_post(API_URL+'schoolbus', '')
+        self.api_post(API_URL + 'schoolbus', '')
 
     @tornado.gen.engine
     def newbus(self, user):
@@ -236,19 +238,34 @@ class APIHandler(tornado.web.RequestHandler):
     
     @tornado.gen.engine
     def week(self, user):
-        self.api_post(API_URL+'week', '')
+        self.api_post(API_URL + 'week', '')
 
     @tornado.gen.engine
     def phylab(self, user):
-        self.api_post(API_URL+'phylab', {'number':user.cardnum, 'password':user.password, 'term':TERM})
+        self.api_post(API_URL + 'phylab', {'number': user.cardnum, 'password': user.password, 'term': TERM})
 
     @tornado.gen.engine
     def lecturenotice(self, user):
-        self.api_post(API_URL+'lecturenotice', '')
+        self.api_post(API_URL + 'lecturenotice', '')
 
-    @tornado.gen.engine
-    def room(self,user):
-        self.api_post(API_URL+'room',{'number':user.cardnum, 'password':user.password})
+    def room(self, user):
+        self.api_post(API_URL + 'room', {'number': user.cardnum, 'password': user.password})
+
+    def yuyue(self, user):
+        key = ['method', 'itemId', 'id', 'dayInfo', 'time', 'cardNo', 'orderVO.useMode', 'orderVO.useTime',
+               'orderVO.itemId', 'orderVO.phone', 'useUserIds', 'orderVO.remark']
+        data = {'cardnum': user.cardnum, 'password': user.password}
+        for i in key:
+            value = self.get_argument(i, default=None)
+            if value:
+                data[i] = value
+        self.api_post(API_URL + 'yuyue', data)
+
+    def exam(self, user):
+        self.api_post(API_URL + 'exam', {'cardnum': user.cardnum, 'password': user.password})
+
+    def tice(self, user):
+        self.api_post(API_URL + 'tice', {'cardnum': user.cardnum, 'password': user.password})
 
     @tornado.gen.engine
     def yuyue(self,user):
@@ -270,21 +287,10 @@ class APIHandler(tornado.web.RequestHandler):
 
     @tornado.gen.engine
     def user(self, user):
-        self.api_post(API_URL+'user', {'number':user.cardnum, 'password':user.password})
+        self.api_post(API_URL + 'user', {'number': user.cardnum, 'password': user.password})
 
-    @tornado.gen.engine
     def emptyroom(self, user):
-        url = self.get_argument('url',None)
-        method = self.get_argument('method',None)
-        data = self.get_argument('data',None)
-        self.api_post(API_URL+'query',{'url':url,'method':method,'data':data})
-    
-    @tornado.gen.engine
-    def newemptyroom(self, user):
-        key = ['campusId','date','buildingId','startSequence','endSequence','page','pageSize']
-        data = {}
-        for i in key:
-             value = self.get_argument(i,default=None)
-             if value:
-                 data[i] = value
-        self.api_post(API_URL+'newemptyroom',data)
+        url = self.get_argument('url', None)
+        method = self.get_argument('method', None)
+        data = self.get_argument('data', None)
+        self.api_post(API_URL + 'query', {'url': url, 'method': method, 'data': data})

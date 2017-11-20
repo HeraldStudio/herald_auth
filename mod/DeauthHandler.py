@@ -5,8 +5,7 @@
 
 import tornado.web
 from sqlalchemy.orm.exc import NoResultFound
-from models.privilege import Privilege
-from models.app import Application
+from mod.models.privilege import Privilege
 
 class DeauthHandler(tornado.web.RequestHandler):
 

@@ -4,10 +4,10 @@
 # @Author  : yml_bright@163.com
 
 import tornado.web
-from sqlalchemy.sql import and_
 from sqlalchemy.orm.exc import NoResultFound
-from models.privilege import Privilege
-from models.app import Application
+from sqlalchemy.sql import and_
+from mod.models.app import Application
+from mod.models.privilege import Privilege
 
 class CheckHandler(tornado.web.RequestHandler):
 
