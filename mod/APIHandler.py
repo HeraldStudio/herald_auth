@@ -12,6 +12,7 @@ from mod.models.app import Application
 from mod.models.privilege import Privilege
 from sqlalchemy.orm.exc import NoResultFound
 from tornado.httpclient import HTTPRequest, AsyncHTTPClient, HTTPError
+from tornado.httputil import url_concat
 
 from config import *
 from mod.models.user import User
@@ -38,6 +39,8 @@ class APIHandler(tornado.web.RequestHandler):
             'nic': self.nic,
             'card': self.card,
             'lecture': self.lecture,
+            'library_auth': self.library_auth,
+            'library_auth_check': self.library_auth_check,
             'library': self.library,
             'library_hot': self.library_hot,
             'renew': self.renew,
@@ -123,6 +126,25 @@ class APIHandler(tornado.web.RequestHandler):
         raise tornado.web.HTTPError(401)
 
     @tornado.gen.engine
+    def api_get(self, url, param):
+        try:
+            client = AsyncHTTPClient()
+            request = HTTPRequest(
+                url_concat(url, param),
+                method='GET',
+                request_timeout=CONNECT_TIME_OUT)
+            response = yield tornado.gen.Task(client.fetch, request)
+            body = response.body
+            if body:
+                self.write(body)
+            else:
+                raise tornado.web.HTTPError(408)  # time out
+            self.finish()
+        except HTTPError:
+            self.write('services are unreachable')
+            self.finish()
+
+    @tornado.gen.engine
     def api_post(self, url, data):
         try:
             client = AsyncHTTPClient()
@@ -202,11 +224,22 @@ class APIHandler(tornado.web.RequestHandler):
         self.api_post(API_URL + 'lecture', {'cardnum': user.cardnum, 'password': user.password})
 
     @tornado.gen.engine
-    def library(self, user):
-        if not user.lib_username:
-            self.api_post(API_URL + 'library', {'cardnum': user.cardnum, 'password': user.cardnum})
+    def library_auth_check(self, user):
+        self.api_post(API_URL + 'library_auth_check', {'cardnum': user.cardnum})
+
+    @tornado.gen.engine
+    def library_auth(self, user):
+        if self.get_argument('action') == 'get_captcha':
+            self.api_get(API_URL + 'library_auth', {'cardnum': user.cardnum})
+        elif self.get_argument('action') == 'login':
+            self.api_post(API_URL + 'library_auth', {'cardnum': user.cardnum, 'password': user.lib_password,
+                                                     'captcha': self.get_argument('captcha')})
         else:
-            self.api_post(API_URL + 'library', {'cardnum': user.lib_username, 'password': user.lib_password})
+            pass
+
+    @tornado.gen.engine
+    def library(self, user):
+        self.api_post(API_URL + 'library', {'cardnum': user.cardnum})
 
     def library_hot(self, user):
         self.api_post(API_URL + 'library_hot', {})
