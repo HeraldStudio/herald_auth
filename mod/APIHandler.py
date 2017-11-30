@@ -52,7 +52,7 @@ class APIHandler(tornado.web.RequestHandler):
             'week': self.week,
             'phylab': self.phylab,
             'emptyroom': self.emptyroom,
-           # 'newemptyroom': self.newemptyroom,
+            'newemptyroom': self.newemptyroom,
             'lecturenotice': self.lecturenotice,
             'room': self.room,
             'yuyue': self.yuyue,
@@ -322,8 +322,19 @@ class APIHandler(tornado.web.RequestHandler):
     def user(self, user):
         self.api_post(API_URL + 'user', {'number': user.cardnum, 'password': user.password})
 
+    @tornado.gen.engine
     def emptyroom(self, user):
         url = self.get_argument('url', None)
         method = self.get_argument('method', None)
         data = self.get_argument('data', None)
         self.api_post(API_URL + 'query', {'url': url, 'method': method, 'data': data})
+
+    @tornado.gen.engine
+    def newemptyroom(self, user):
+        key = ['campusId', 'date', 'buildingId', 'startSequence', 'endSequence', 'page', 'pageSize']
+        data = {}
+        for i in key:
+            value = self.get_argument(i, default=None)
+            if value:
+                data[i] = value
+        self.api_post(API_URL + 'newemptyroom', data)
