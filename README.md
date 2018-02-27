@@ -49,3 +49,5 @@
 - library
 - renew (POST barcode=图书条形码号)
 ```
+#### NOTE
+config.py中API_URL 要接负载均衡

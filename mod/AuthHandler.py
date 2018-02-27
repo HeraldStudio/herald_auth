@@ -84,7 +84,7 @@ class AuthHandler(tornado.web.RequestHandler):
                                 uuid=token)
                 self.db.add(item)
                 self.db.commit()
-            except:
+            except Exception as e:
                 raise tornado.web.HTTPError(401)
             return token
 
