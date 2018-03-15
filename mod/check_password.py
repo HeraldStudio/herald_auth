@@ -24,6 +24,6 @@ def check_password(cardnum, password):
             request_timeout=CONNECT_TIME_OUT)
         response = client.fetch(request)
         return True
-    except HTTPError:
-        pass
+    except HTTPError as e:
+        print e
     return False
